@@ -1,0 +1,33 @@
+{
+  "name": "zero-guess-frontend",
+  "version": "0.0.1",
+  "description": "Zero-config CLI tool for engineering-grade frontend project initialization. Opinionated, scalable, and structured — so you can focus on engineering, not boilerplate.",
+  "bin": {
+    "zgf": "./bin/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LAYT73/zero-guess-frontend.git"
+  },
+  "type": "module",
+  "keywords": [
+    "cli",
+    "frontend",
+    "scaffolding",
+    "init",
+    "react",
+    "fsd"
+  ],
+  "author": "Nikita Shipilov",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/LAYT73/zero-guess-frontend/issues"
+  },
+  "homepage": "https://github.com/LAYT73/zero-guess-frontend#readme",
+  "dependencies": {
+    "chalk": "^5.4.1",
+    "execa": "^9.6.0",
+    "fs-extra": "^11.3.0",
+    "inquirer": "^12.9.0"
+  }
+}
