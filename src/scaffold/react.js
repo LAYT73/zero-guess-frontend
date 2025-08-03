@@ -49,7 +49,36 @@ export async function createReactApp() {
     await fs.copy(templatePath, targetPath);
 
     // Initialize git repository
-    await execa("git", ["init"], { cwd: targetPath, stdio: "inherit" });
+    try {
+      await execa("git", ["init"], { cwd: targetPath, stdio: "inherit" });
+    } catch (gitError) {
+      if (
+        gitError.code === "ENOENT" ||
+        (typeof gitError.message === "string" &&
+          gitError.message.toLowerCase().includes("not found"))
+      ) {
+        console.log(
+          chalk.redBright(
+            `\n❌ Git is not installed or not available in your PATH.\nPlease install Git from https://git-scm.com/ and try again.`
+          )
+        );
+        return;
+      } else {
+        throw gitError;
+      }
+    }
+
+    // Check if the selected package manager is installed
+    try {
+      await execa(packageManager, ["--version"]);
+    } catch (pmError) {
+      console.log(
+        chalk.redBright(
+          `\n❌ The selected package manager "${packageManager}" is not installed or not found in your PATH.\nPlease install it and try again.`
+        )
+      );
+      process.exit(1);
+    }
 
     // Install dependencies
     await execa(packageManager, ["install"], {
