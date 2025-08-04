@@ -28,20 +28,30 @@ export async function toggleTypeScriptSupport(targetPath, language) {
 
       // Заменить расширения .ts/.tsx на .js/.jsx
       const srcPath = path.join(targetPath, "src");
-      const files = await fs.readdir(srcPath);
-
-      for (const file of files) {
-        const ext = path.extname(file);
-        if (ext === ".ts" || ext === ".tsx") {
-          const newExt = ext === ".ts" ? ".js" : ".jsx";
-          const oldPath = path.join(srcPath, file);
-          const newPath = path.join(srcPath, path.basename(file, ext) + newExt);
-          await fs.rename(oldPath, newPath);
-        }
-      }
+      await replaceExtensionsRecursive(srcPath);
     }
   } catch (error) {
     console.error("❌ Failed to toggle TypeScript support:", error.message);
     throw error;
+  }
+}
+
+async function replaceExtensionsRecursive(dir) {
+  const entries = await fs.readdir(dir, { withFileTypes: true });
+
+  for (const entry of entries) {
+    const fullPath = path.join(dir, entry.name);
+
+    if (entry.isDirectory()) {
+      await replaceExtensionsRecursive(fullPath); // рекурсивный вызов
+    } else {
+      const ext = path.extname(entry.name);
+      if (ext === ".ts" || ext === ".tsx") {
+        const newExt = ext === ".ts" ? ".js" : ".jsx";
+        const newName = path.basename(entry.name, ext) + newExt;
+        const newPath = path.join(dir, newName);
+        await fs.rename(fullPath, newPath);
+      }
+    }
   }
 }
