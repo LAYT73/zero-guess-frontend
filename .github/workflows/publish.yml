@@ -1,28 +1,29 @@
-name: Publish npm package
+name: Publish Package
 
 on:
   push:
     tags:
-      - 'v*.*.*'   # Запускать при пуше тегов вида v0.0.1, v1.2.3 и т.п.
+      - 'v*'
 
 permissions:
+  id-token: write  # Required for OIDC
   contents: read
-  id-token: write
-  packages: write
 
 jobs:
   publish:
     runs-on: ubuntu-latest
-    environment: npm-publish
-
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
-          node-version: 18
-          registry-url: https://registry.npmjs.org/
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
 
-      - name: Publish to npm
-        run: npm publish
+      # Ensure npm 11.5.1 or later is installed
+      - name: Update npm
+        run: npm install -g npm@latest
+      - run: npm ci
+      - run: npm run build --if-present
+      - run: npm test
+      - run: npm publish
