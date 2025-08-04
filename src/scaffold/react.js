@@ -7,8 +7,13 @@ import { askUser } from "./../../utils/ack.js";
 import { validateTemplate } from "./../../helpers/validateTemplate.js";
 import { validateTargetDir } from "./../../helpers/validateTargetDir.js";
 import { initGit } from "./../../helpers/initGit.js";
+import { editPackageJson } from "./../../helpers/packageJsonEditor.js";
+import { toggleTypeScriptSupport } from "./../../helpers/toggleTypeScriptSupport.js";
+import { editViteConfig } from "./../../helpers/editViteConfig.js";
 import { checkPackageManager } from "./../../helpers/checkPackageManager.js";
 import { installDependencies } from "./../../helpers/installDependencies.js";
+import { fixHtmlEntryPoint } from "../../helpers/fixHtmlEntryPoint.js";
+import { convertTsToJsReferences } from "../../helpers/convertTsToJsReferences.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -21,7 +26,7 @@ export async function createReactApp() {
       __dirname,
       "../../templates",
       "react",
-      `vite-${architecture}-${language}`
+      `${architecture}`
     );
 
     if (!validateTemplate(templatePath, language, architecture)) return;
@@ -31,6 +36,12 @@ export async function createReactApp() {
       chalk.cyan(`\n📁 Creating project "${appName}" from template...`)
     );
     await fs.copy(templatePath, targetPath);
+
+    await convertTsToJsReferences(targetPath, language);
+    await fixHtmlEntryPoint(targetPath, language);
+    await editPackageJson(targetPath, appName, language);
+    await editViteConfig(targetPath, language);
+    await toggleTypeScriptSupport(targetPath, language);
 
     if (!(await initGit(targetPath))) return;
     if (!(await checkPackageManager(packageManager))) return;
