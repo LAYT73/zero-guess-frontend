@@ -1,110 +1,109 @@
 # zero-guess-frontend
 
-**zero-guess-frontend** — это CLI-инструмент для быстрого и структурированного создания frontend-проектов на React. Он минимизирует рутину, предлагает лучшие практики и гибко настраивается под ваши задачи.
+**zero-guess-frontend** is a CLI tool for fast and structured creation of React frontend projects. It minimizes boilerplate, follows best practices, and adapts to your needs.
 
 ---
 
-## 🚀 Возможности
+## 🚀 Features
 
-- **Инициализация React-проекта** с выбором архитектуры: Feature-Sliced Design (FSD), Atomic Design, или пустая структура.
-- **Выбор языка:** TypeScript (рекомендуется) или JavaScript.
-- **Автоматическая настройка package.json, Vite, Git, .gitignore и других файлов.**
-- **Поддержка популярных пакетных менеджеров:** npm, yarn, pnpm.
-- **Расширяемость шаблонов:** легко добавлять свои шаблоны в папку [`templates/`](templates/).
-- **Планируется:** интеграция роутинга, менеджеров состояния, Storybook, тестов, UI Kit, линтеров и других опций.
+* **Initialize a React project** with a choice of architecture: Feature-Sliced Design (FSD), Atomic Design, or Empty.
+* **Language selection:** TypeScript (recommended) or JavaScript.
+* **Automatic configuration of package.json, Vite, Git, .gitignore, and other files.**
+* **Supports popular package managers:** npm, yarn, pnpm.
+* **Extensible templates:** easily add your own templates to the [`templates/`](templates/) folder.
+* **Planned:** routing, state managers, Storybook, tests, UI Kit, linters, and more.
 
 ---
 
-## 📦 Установка
+## 📦 Installation
 
 ```bash
 npm install -g zero-guess-frontend
-# или через yarn/pnpm
 ```
 
 ---
 
-## ⚡ Быстрый старт
+## ⚡ Quick Start
 
-1. Запустите CLI:
+1. Run the CLI:
 
    ```bash
    zgf
    ```
 
-2. Следуйте интерактивным вопросам:
+2. Follow the interactive prompts:
 
-   - Название проекта
-   - Пакетный менеджер
-   - Язык (TypeScript/JavaScript)
-   - Архитектура (FSD/Atomic/Empty)
+   * Project name
+   * Package manager
+   * Language (TypeScript/JavaScript)
+   * Architecture (FSD/Atomic/Empty)
 
-3. После генерации:
+3. After generation:
 
    ```bash
-   cd <имя_проекта>
+   cd <project_name>
    npm run dev
-   # или используйте выбранный пакетный менеджер
+   # or use your chosen package manager
    ```
 
 ---
 
-## 🏗️ Структура проекта
+## 🏗️ Project Structure
 
 ```bash
-├── bin/                 # Точка входа CLI
-├── src/                 # Основная логика CLI
-│   └── scaffold/        # Модули генерации (React и др.)
-├── helpers/             # Вспомогательные функции
-├── templates/           # Шаблоны проектов (React/FSD, Atomic, Empty)
-├── utils/               # Утилиты
+├── bin/                 # CLI entry point
+├── src/                 # Core CLI logic
+│   └── scaffold/        # Generation modules (React etc.)
+├── helpers/             # Helper functions
+├── templates/           # Project templates (React/FSD, Atomic, Empty)
+├── utils/               # Utilities
 ├── package.json
 └── README.md
 ```
 
 ---
 
-## 🛠️ Расширение шаблонов
+## 🛠️ Template Extension
 
-Добавьте свой шаблон в папку [`templates/`](templates/) и он станет доступен для генерации через CLI.
+Add your template to the [`templates/`](templates/) folder to make it available in the CLI.
 
 ---
 
-## 📝 Скрипты
+## 📝 Scripts
 
-- `dev` — запуск в режиме разработки
-- `build` — сборка проекта
-- `preview` — предпросмотр собранного приложения
+* `dev` — development mode
+* `build` — build the project
+* `preview` — preview the built app
 
 ---
 
 ## ❓ FAQ
 
-**Q:** Как добавить свой шаблон?
-**A:** Просто создайте новую папку в [`templates/`](templates/), добавьте этот вариант в [`utils/ack.js`](utils/ack.js) и опишите структуру.
+**Q:** How to add my own template?
+**A:** Create a new folder in [`templates/`](templates/), add the option in [`utils/ack.js`](utils/ack.js), and define the structure.
 
-**Q:** Можно ли использовать только JavaScript?
-**A:** Да, выберите JS при инициализации — все TS-файлы и конфиги будут удалены автоматически.
+**Q:** Can I use JavaScript only?
+**A:** Yes, select JS during initialization — all TS files and configs will be removed automatically.
 
-**Q:** Как добавить роутинг, тесты, Storybook и др.?
-**A:** Эти опции появятся в будущих версиях. Следите за обновлениями!
-
----
-
-## 📚 Документация и поддержка
-
-- [Репозиторий GitHub](https://github.com/LAYT73/zero-guess-frontend)
-- [Создать issue](https://github.com/LAYT73/zero-guess-frontend/issues)
+**Q:** How to add routing, tests, Storybook, etc.?
+**A:** These options will be available in future versions. Stay tuned!
 
 ---
 
-## 🧑‍💻 Автор
+## 📚 Docs & Support
 
-Никита Шипилов
-Лицензия: ISC
+* [GitHub Repository](https://github.com/LAYT73/zero-guess-frontend)
+* [Create an Issue](https://github.com/LAYT73/zero-guess-frontend/issues)
 
 ---
 
-## 💡 Вклад
+## 🧑‍💻 Author
 
-PR и предложения приветствуются!
+Nikita Shipilov
+License: ISC
+
+---
+
+## 💡 Contributing
+
+PRs and suggestions are welcome!
