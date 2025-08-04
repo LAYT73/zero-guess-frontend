@@ -1,0 +1,28 @@
+name: Publish npm package
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'   # Запускать при пуше тегов вида v0.0.1, v1.2.3 и т.п.
+
+permissions:
+  contents: read
+  id-token: write
+  packages: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment: npm-publish
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          registry-url: https://registry.npmjs.org/
+
+      - name: Publish to npm
+        run: npm publish
