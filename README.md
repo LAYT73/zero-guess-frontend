@@ -6,12 +6,12 @@
 
 ## 🚀 Features
 
-* **Initialize a React project** with a choice of architecture: Feature-Sliced Design (FSD), Atomic Design, or Empty.
-* **Language selection:** TypeScript (recommended) or JavaScript.
-* **Automatic configuration of package.json, Vite, Git, .gitignore, and other files.**
-* **Supports popular package managers:** npm, yarn, pnpm.
-* **Extensible templates:** easily add your own templates to the [`templates/`](templates/) folder.
-* **Planned:** routing, state managers, Storybook, tests, UI Kit, linters, and more.
+- **Initialize a React project** with a choice of architecture: Feature-Sliced Design (FSD), Atomic Design, or Empty.
+- **Language selection:** TypeScript (recommended) or JavaScript.
+- **Automatic configuration of package.json, Vite, Git, .gitignore, and other files.**
+- **Supports popular package managers:** npm, yarn, pnpm.
+- **Extensible templates:** easily add your own templates to the [`templates/`](templates/) folder.
+- **Planned:** routing, state managers, Storybook, tests, UI Kit, linters, and more.
 
 ---
 
@@ -33,10 +33,10 @@ npm install -g zero-guess-frontend
 
 2. Follow the interactive prompts:
 
-   * Project name
-   * Package manager
-   * Language (TypeScript/JavaScript)
-   * Architecture (FSD/Atomic/Empty)
+   - Project name
+   - Package manager
+   - Language (TypeScript/JavaScript)
+   - Architecture (FSD/Atomic/Empty)
 
 3. After generation:
 
@@ -71,9 +71,9 @@ Add your template to the [`templates/`](templates/) folder to make it available 
 
 ## 📝 Scripts
 
-* `dev` — development mode
-* `build` — build the project
-* `preview` — preview the built app
+- `dev` — development mode
+- `build` — build the project
+- `preview` — preview the built app
 
 ---
 
@@ -92,8 +92,9 @@ Add your template to the [`templates/`](templates/) folder to make it available 
 
 ## 📚 Docs & Support
 
-* [GitHub Repository](https://github.com/LAYT73/zero-guess-frontend)
-* [Create an Issue](https://github.com/LAYT73/zero-guess-frontend/issues)
+- [GitHub Repository](https://github.com/LAYT73/zero-guess-frontend)
+- [Create an Issue](https://github.com/LAYT73/zero-guess-frontend/issues)
+- [Npm package](https://www.npmjs.com/package/zero-guess-frontend)
 
 ---
 
