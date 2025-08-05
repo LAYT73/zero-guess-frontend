@@ -2,23 +2,24 @@ import fs from "fs-extra";
 import path from "path";
 
 /**
- * Редактирует package.json в указанной директории.
+ * Edits the package.json file to update the project name and dependencies
  *
- * @param {string} targetPath - Путь к директории проекта.
- * @param {string} appName - Новое имя проекта.
- * @param {"ts" | "js"} language - Выбранный язык проекта.
+ * @param {string} targetPath - Path to the project directory.
+ * @param {string} appName - New project name.
+ * @param {"ts" | "js"} language - Selected project language.
+ * @param {boolean} routing - Whether routing is enabled.
  */
-export async function editPackageJson(targetPath, appName, language) {
+export async function editPackageJson(targetPath, appName, language, routing) {
   try {
     const pkgJsonPath = path.join(targetPath, "package.json");
 
-    // Прочитать package.json
+    // Read package.json
     const pkg = await fs.readJson(pkgJsonPath);
 
-    // Заменить имя проекта
+    // Replace project name
     pkg.name = appName;
 
-    // Если выбран язык JS, удалить зависимости TypeScript и типы
+    // If JS is selected, remove TypeScript dependencies and types
     if (language === "js") {
       if (pkg.devDependencies) {
         delete pkg.devDependencies.typescript;
@@ -27,13 +28,17 @@ export async function editPackageJson(targetPath, appName, language) {
         delete pkg.devDependencies["@types/react-dom"];
       }
 
-      // Обновить скрипт сборки без tsc
+      // Update build script without tsc
       if (pkg.scripts && pkg.scripts.build?.includes("tsc")) {
         pkg.scripts.build = "vite build";
       }
     }
 
-    // Записать обратно
+    if (pkg.dependencies && routing) {
+      pkg.dependencies["react-router-dom"] = "^7.1.1";
+    }
+
+    // Write back
     await fs.writeJson(pkgJsonPath, pkg, { spaces: 2 });
   } catch (error) {
     console.error("❌ Failed to edit package.json:", error.message);

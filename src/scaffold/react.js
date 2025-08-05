@@ -4,23 +4,34 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { askUser } from "./../../utils/ack.js";
 
-import { validateTemplate } from "./../../helpers/validateTemplate.js";
-import { validateTargetDir } from "./../../helpers/validateTargetDir.js";
-import { initGit } from "./../../helpers/initGit.js";
-import { editPackageJson } from "./../../helpers/packageJsonEditor.js";
-import { toggleTypeScriptSupport } from "./../../helpers/toggleTypeScriptSupport.js";
-import { editViteConfig } from "./../../helpers/editViteConfig.js";
-import { checkPackageManager } from "./../../helpers/checkPackageManager.js";
-import { installDependencies } from "./../../helpers/installDependencies.js";
-import { fixHtmlEntryPoint } from "../../helpers/fixHtmlEntryPoint.js";
+import { validateTemplate } from "./../../helpers/validate/validateTemplate.js";
+import { validateTargetDir } from "./../../helpers/validate/validateTargetDir.js";
+import { checkPackageManager } from "./../../helpers/validate/checkPackageManager.js";
+
+import { editViteConfig } from "./../../helpers/config/editViteConfig.js";
+import { initGit } from "./../../helpers/config/initGit.js";
+import { installDependencies } from "./../../helpers/config/installDependencies.js";
+import { editPackageJson } from "./../../helpers/config/packageJsonEditor.js";
+
 import { convertTsToJsReferences } from "../../helpers/convertTsToJsReferences.js";
+import { fixHtmlEntryPoint } from "../../helpers/fixHtmlEntryPoint.js";
+import { setupRouting } from "./../../helpers/setupRouting.js";
+import { toggleTypeScriptSupport } from "./../../helpers/toggleTypeScriptSupport.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export async function createReactApp() {
   try {
-    const { appName, packageManager, language, architecture } = await askUser();
+    const {
+      appName,
+      packageManager,
+      language,
+      architecture,
+      routing,
+      privateRouting,
+    } = await askUser();
+
     const targetPath = path.join(process.cwd(), appName);
     const templatePath = path.join(
       __dirname,
@@ -29,25 +40,43 @@ export async function createReactApp() {
       `${architecture}`
     );
 
-    if (!validateTemplate(templatePath, language, architecture)) return;
-    if (!(await validateTargetDir(targetPath, appName))) return;
+    if (!validateTemplate(templatePath, language, architecture)) return; // Validate template if it exists
+    if (!(await validateTargetDir(targetPath, appName))) return; // Validate target directory if it exists
 
     console.log(
       chalk.cyan(`\n📁 Creating project "${appName}" from template...`)
     );
-    await fs.copy(templatePath, targetPath);
 
-    await convertTsToJsReferences(targetPath, language);
-    await fixHtmlEntryPoint(targetPath, language);
-    await editPackageJson(targetPath, appName, language);
-    await editViteConfig(targetPath, language);
-    await toggleTypeScriptSupport(targetPath, language);
+    await fs.copy(templatePath, targetPath); // Copy template files
 
-    if (!(await initGit(targetPath))) return;
-    if (!(await checkPackageManager(packageManager))) return;
+    if (language === "js") {
+      await convertTsToJsReferences(targetPath); // Convert TS references to JS in main.tsx
+      await fixHtmlEntryPoint(targetPath); // Fix HTML entry point for JS projects
+    }
 
-    await installDependencies(packageManager, targetPath);
+    // Add routing setup if enabled
+    if (routing) {
+      await setupRouting({
+        targetPath,
+        language,
+        architecture,
+        privateRouting,
+      });
+    }
 
+    await editPackageJson(targetPath, appName, language, routing); // Edit package.json with new app name and dependencies
+    await editViteConfig(targetPath, language); // Edit Vite config based on language
+
+    if (language === "js") {
+      await toggleTypeScriptSupport(targetPath); // Remove TypeScript support if JS is selected
+    }
+
+    if (!(await initGit(targetPath))) return; // Initialize Git repository
+    if (!(await checkPackageManager(packageManager))) return; // Check package manager
+
+    await installDependencies(packageManager, targetPath); // Install dependencies
+
+    // Create .meta.json file with project metadata
     await fs.writeJson(path.join(targetPath, ".meta.json"), {
       appName,
       packageManager,
@@ -56,6 +85,7 @@ export async function createReactApp() {
       createdAt: new Date().toISOString(),
     });
 
+    // Log success message
     console.log(
       chalk.greenBright(`\n✅ Project "${appName}" created successfully!\n`)
     );

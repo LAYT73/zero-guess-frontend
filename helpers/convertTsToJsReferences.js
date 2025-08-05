@@ -2,14 +2,11 @@ import fs from "fs-extra";
 import path from "path";
 
 /**
- * Преобразует main.tsx → main.jsx и корректирует ссылки.
+ * Converts TypeScript references in main.tsx to JavaScript references.
  *
- * @param {string} targetPath - Путь к проекту.
- * @param {"ts" | "js"} language - Язык проекта.
+ * @param {string} targetPath - Path to the project.
  */
-export async function convertTsToJsReferences(targetPath, language) {
-  if (language !== "js") return;
-
+export async function convertTsToJsReferences(targetPath) {
   const mainTsxPath = path.join(targetPath, "src", "main.tsx");
   const mainJsxPath = path.join(targetPath, "src", "main.jsx");
 
@@ -17,16 +14,16 @@ export async function convertTsToJsReferences(targetPath, language) {
 
   let content = await fs.readFile(mainTsxPath, "utf-8");
 
-  // Удалить "!" после getElementById
+  // Remove "!" after getElementById
   content = content.replace(
     /getElementById\('root'\)!/g,
     "getElementById('root')"
   );
 
-  // Заменить .tsx на .jsx в импортах
+  // Replace .tsx with .jsx in imports
   content = content.replace(/\.tsx/g, ".jsx");
 
-  // Записать как .jsx и удалить .tsx
+  // Write as .jsx and remove .tsx
   await fs.writeFile(mainJsxPath, content, "utf-8");
   await fs.remove(mainTsxPath);
 }

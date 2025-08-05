@@ -2,34 +2,31 @@ import fs from "fs-extra";
 import path from "path";
 
 /**
- * Удаляет TypeScript-файлы и конфиги при выборе языка JavaScript.
+ * Removes TypeScript support from the project by deleting TypeScript configuration files
  *
- * @param {string} targetPath - Путь к корню проекта.
- * @param {"ts" | "js"} language - Язык проекта.
+ * @param {string} targetPath - Path to the project root.
  */
-export async function toggleTypeScriptSupport(targetPath, language) {
+export async function toggleTypeScriptSupport(targetPath) {
   try {
-    if (language === "js") {
-      // Удалить tsconfig.*.json
-      const tsconfigs = [
-        "tsconfig.json",
-        "tsconfig.node.json",
-        "tsconfig.app.json",
-        "vite-env.d.ts",
-        path.join("src", "vite-env.d.ts"),
-      ];
+    // Remove tsconfig.*.json
+    const tsconfigs = [
+      "tsconfig.json",
+      "tsconfig.node.json",
+      "tsconfig.app.json",
+      "vite-env.d.ts",
+      path.join("src", "vite-env.d.ts"),
+    ];
 
-      for (const config of tsconfigs) {
-        const configPath = path.join(targetPath, config);
-        if (await fs.pathExists(configPath)) {
-          await fs.remove(configPath);
-        }
+    for (const config of tsconfigs) {
+      const configPath = path.join(targetPath, config);
+      if (await fs.pathExists(configPath)) {
+        await fs.remove(configPath);
       }
-
-      // Заменить расширения .ts/.tsx на .js/.jsx
-      const srcPath = path.join(targetPath, "src");
-      await replaceExtensionsRecursive(srcPath);
     }
+
+    // Replace .ts/.tsx with .js/.jsx
+    const srcPath = path.join(targetPath, "src");
+    await replaceExtensionsRecursive(srcPath);
   } catch (error) {
     console.error("❌ Failed to toggle TypeScript support:", error.message);
     throw error;
@@ -43,7 +40,7 @@ async function replaceExtensionsRecursive(dir) {
     const fullPath = path.join(dir, entry.name);
 
     if (entry.isDirectory()) {
-      await replaceExtensionsRecursive(fullPath); // рекурсивный вызов
+      await replaceExtensionsRecursive(fullPath);
     } else {
       const ext = path.extname(entry.name);
       if (ext === ".ts" || ext === ".tsx") {
