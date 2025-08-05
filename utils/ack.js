@@ -2,7 +2,6 @@ import inquirer from "inquirer";
 
 export async function askUser() {
   const answers = await inquirer.prompt([
-    // TODO: Implement these options for first version
     {
       name: "appName",
       message: "Enter project name:",
@@ -36,20 +35,20 @@ export async function askUser() {
       ],
       default: "fsd",
     },
+    {
+      type: "confirm",
+      name: "routing",
+      message: "Setup routing (react-router-dom)?",
+      default: true,
+    },
+    {
+      type: "confirm",
+      name: "privateRouting",
+      message: "Include public/private routes?",
+      default: true,
+      when: (answers) => answers.routing === true,
+    },
     // TODO: Implement these options later
-    // {
-    //   type: "confirm",
-    //   name: "routing",
-    //   message: "Setup routing (react-router-dom)?",
-    //   default: true,
-    // },
-    // {
-    //   type: "confirm",
-    //   name: "privateRouting",
-    //   message: "Include public/private routes?",
-    //   default: true,
-    //   when: (answers) => answers.routing === true,
-    // },
     // {
     //   type: "list",
     //   name: "stateManager",
