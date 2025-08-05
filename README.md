@@ -10,8 +10,9 @@
 - **Language selection:** TypeScript (recommended) or JavaScript.
 - **Automatic configuration of package.json, Vite, Git, .gitignore, and other files.**
 - **Supports popular package managers:** npm, yarn, pnpm.
+- **Add Routing templates:** you can add react-router-dom with templates for your init project.
 - **Extensible templates:** easily add your own templates to the [`templates/`](templates/) folder.
-- **Planned:** routing, state managers, Storybook, tests, UI Kit, linters, and more.
+- **Planned:** state managers, Storybook, tests, UI Kit, linters, and more.
 
 ---
 
@@ -37,6 +38,7 @@ npm install -g zero-guess-frontend
    - Package manager
    - Language (TypeScript/JavaScript)
    - Architecture (FSD/Atomic/Empty)
+   - Routing (With Private Router template)
 
 3. After generation:
 
