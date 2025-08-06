@@ -19,7 +19,7 @@
 - **Add Routing templates:** you can add react-router-dom with templates for your init project.
 - **Extensible templates:** easily add your own templates to the [`templates/`](templates/) folder.
 - **Planned:** state managers, Storybook, tests, UI Kit, linters, and more.
-
+- **Documentation**: [Modern and usefull documentation.](https://layt73.github.io/zero-guess-frontend-docs/)
 ---
 
 ## 📦 Installation
@@ -146,9 +146,10 @@ Update [`utils/ack.js`](utils/ack.js) to register your new template.
 
 ## 📚 Docs & Support
 
+- [DOCS](https://layt73.github.io/zero-guess-frontend-docs/)
 - [GitHub Repository](https://github.com/LAYT73/zero-guess-frontend)
-- [Create an Issue](https://github.com/LAYT73/zero-guess-frontend/issues)
 - [Npm package](https://www.npmjs.com/package/zero-guess-frontend)
+- [Create an Issue](https://github.com/LAYT73/zero-guess-frontend/issues)
 
 ---
 
