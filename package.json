@@ -1,6 +1,6 @@
 {
   "name": "zero-guess-frontend",
-  "version": "0.0.6",
+  "version": "0.1.0",
   "description": "Zero-config CLI tool for engineering-grade frontend project initialization. Opinionated, scalable, and structured — so you can focus on engineering, not boilerplate.",
   "bin": {
     "zgf": "./bin/index.js"
@@ -24,7 +24,7 @@
   "bugs": {
     "url": "https://github.com/LAYT73/zero-guess-frontend/issues"
   },
-  "homepage": "https://github.com/LAYT73/zero-guess-frontend#readme",
+  "homepage": "https://layt73.github.io/zero-guess-frontend-docs/",
   "dependencies": {
     "chalk": "^5.4.1",
     "execa": "^9.6.0",
