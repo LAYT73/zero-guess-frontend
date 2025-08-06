@@ -23,7 +23,3 @@ Please include as much relevant information as possible to help reproduce and an
 I will aim to respond within **3 business days**. If the vulnerability is confirmed, a fix or workaround will be prepared and released as soon as possible. You’ll be kept informed about the status of your report during the process.
 
 All reports will be handled confidentially.
-
----
-
-Let me know if you'd like to include a PGP key for encrypted reports or details about coordinated disclosure.
