@@ -1,6 +1,57 @@
 import inquirer from "inquirer";
+import yargs from "yargs/yargs";
+import { hideBin } from "yargs/helpers";
+
+const argv = yargs(hideBin(process.argv))
+  .usage("Usage: zgf [options]")
+  .example(
+    "zgf --name=my-app --pm=yarn --lang=ts --arch=fsd --routing --private",
+    "Generate a frontend project with the given settings"
+  )
+  .option("name", {
+    alias: "n",
+    type: "string",
+    description: "Project name",
+  })
+  .option("pm", {
+    alias: "packageManager",
+    type: "string",
+    choices: ["npm", "yarn", "pnpm"],
+  })
+  .option("lang", {
+    alias: "language",
+    choices: ["ts", "js"],
+    type: "string",
+  })
+  .option("arch", {
+    alias: "architecture",
+    choices: ["fsd", "atomic", "empty"],
+    type: "string",
+  })
+  .option("routing", {
+    type: "boolean",
+    description: "Include react-router",
+  })
+  .option("private", {
+    alias: "privateRouting",
+    type: "boolean",
+    description: "Include private routing",
+  })
+  .help().argv;
 
 export async function askUser() {
+  const { name, pm, lang, arch, routing, privateRouting } = argv;
+  if (name && pm && lang && arch) {
+    return {
+      appName: name,
+      packageManager: pm,
+      language: lang,
+      architecture: arch,
+      routing,
+      privateRouting,
+    };
+  }
+
   const answers = await inquirer.prompt([
     {
       name: "appName",

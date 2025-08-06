@@ -26,27 +26,71 @@ npm install -g zero-guess-frontend
 
 ## ⚡ Quick Start
 
-1. Run the CLI:
+### Option 1: Interactive mode
 
-   ```bash
-   zgf
-   ```
+```bash
+zgf
+```
 
-2. Follow the interactive prompts:
+Follow the prompts:
 
-   - Project name
-   - Package manager
-   - Language (TypeScript/JavaScript)
-   - Architecture (FSD/Atomic/Empty)
-   - Routing (With Private Router template)
+- Project name
+- Package manager
+- Language (TypeScript / JavaScript)
+- Architecture (FSD / Atomic / Empty)
+- Routing (optionally with private route setup)
 
-3. After generation:
+### Option 2: CLI options
 
-   ```bash
-   cd <project_name>
-   npm run dev
-   # or use your chosen package manager
-   ```
+```bash
+zgf --name=my-app --pm=yarn --lang=ts --arch=fsd --routing --private
+```
+
+| Option      | Alias | Type    | Description                             |
+| ----------- | ----- | ------- | --------------------------------------- |
+| `--name`    | `-n`  | string  | Project name                            |
+| `--pm`      |       | string  | Package manager (`npm`, `yarn`, `pnpm`) |
+| `--lang`    |       | string  | Language (`ts`, `js`)                   |
+| `--arch`    |       | string  | Architecture (`fsd`, `atomic`, `empty`) |
+| `--routing` |       | boolean | Include `react-router-dom`              |
+| `--private` |       | boolean | Add public/private routing setup        |
+| `--help`    |       | boolean | Show help                               |
+| `--version` |       | boolean | Show CLI version                        |
+
+---
+
+## 🆘 CLI Help
+
+Run the following command to see all available CLI options:
+
+```bash
+zgf --help
+```
+
+Or to check the installed version:
+
+```bash
+zgf --version
+```
+
+Example output:
+
+```bash
+Usage: zgf [options]
+
+Options:
+  -n, --name              Project name
+  --pm                    Package manager         [choices: "npm", "yarn", "pnpm"]
+  --lang                  Programming language    [choices: "ts", "js"]
+  --arch                  Architecture type       [choices: "fsd", "atomic", "empty"]
+  --routing               Include react-router-dom
+  --private               Add private/public routes
+  -h, --help              Show help
+  -v, --version           Show CLI version
+
+Examples:
+  zgf --name=my-app --pm=yarn --lang=ts --arch=fsd --routing --private
+```
 
 ---
 
@@ -57,7 +101,7 @@ npm install -g zero-guess-frontend
 ├── src/                 # Core CLI logic
 │   └── scaffold/        # Generation modules (React etc.)
 ├── helpers/             # Helper functions
-├── templates/           # Project templates (React/FSD, Atomic, Empty)
+├── templates/           # Project templates (React/FSD, Atomic, Empty, React-Router-Dom and your custom)
 ├── utils/               # Utilities
 ├── package.json
 └── README.md
@@ -68,6 +112,8 @@ npm install -g zero-guess-frontend
 ## 🛠️ Template Extension
 
 Add your template to the [`templates/`](templates/) folder to make it available in the CLI.
+
+Update [`utils/ack.js`](utils/ack.js) to register your new template.
 
 ---
 
@@ -102,7 +148,7 @@ Add your template to the [`templates/`](templates/) folder to make it available 
 
 ## 🧑‍💻 Author
 
-Nikita Shipilov
+**Nikita Shipilov**
 License: ISC
 
 ---
