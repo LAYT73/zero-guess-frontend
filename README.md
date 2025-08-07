@@ -17,10 +17,10 @@
 - **Automatic configuration of package.json, Vite, Git, .gitignore, and other files.**
 - **Supports popular package managers:** npm, yarn, pnpm.
 - **Add Routing templates:** you can add react-router-dom with templates for your init project.
-- **Add State manager with templates:** you also can add RTK/MobX with templates without any other actions.
+- **Add State manager with templates:** you can also add RTK/MobX with templates without any other actions.
 - **Extensible templates:** easily add your own templates to the [`templates/`](templates/) folder.
 - **Planned:** Storybook, tests, UI Kit, linters, and more.
-- **Documentation**: [Modern and usefull documentation.](https://layt73.github.io/zero-guess-frontend-docs/)
+- **Documentation**: [Modern and useful documentation.](https://layt73.github.io/zero-guess-frontend-docs/)
 
 ---
 
@@ -63,7 +63,7 @@ zgf --name=my-app --pm=yarn --lang=ts --arch=fsd --routing --private --sm=redux
 | `--arch`    |       | string  | Architecture (`fsd`, `atomic`, `empty`) |
 | `--routing` |       | boolean | Include `react-router-dom`              |
 | `--private` |       | boolean | Add public/private routing setup        |
-| `--sm`      |       | string  | State manager (`redux`, 'mobx', 'none') |
+| `--sm`      |       | string  | State manager (`redux`, `mobx`, `none`) |
 | `--help`    |       | boolean | Show help                               |
 | `--version` |       | boolean | Show CLI version                        |
 

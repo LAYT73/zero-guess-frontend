@@ -27,6 +27,12 @@ export async function toggleTypeScriptSupport(targetPath) {
     // Replace .ts/.tsx with .js/.jsx
     const srcPath = path.join(targetPath, "src");
     await replaceExtensionsRecursive(srcPath);
+
+    // Modify ESLint config for JavaScript
+    const eslintPath = path.join(targetPath, "eslint.config.js");
+    if (await fs.pathExists(eslintPath)) {
+      await modifyEslintConfigForJS(eslintPath);
+    }
   } catch (error) {
     console.error("❌ Failed to toggle TypeScript support:", error.message);
     throw error;
@@ -51,4 +57,23 @@ async function replaceExtensionsRecursive(dir) {
       }
     }
   }
+}
+
+async function modifyEslintConfigForJS(eslintPath) {
+  let content = await fs.readFile(eslintPath, "utf8");
+
+  // 1. Удалить import tseslint
+  content = content.replace(
+    /import\s+tseslint\s+from\s+['"]typescript-eslint['"]\s*\n?/g,
+    ""
+  );
+
+  // 2. Заменить '**/*.{ts,tsx}' на '**/*.{js,jsx}'
+  content = content.replace(/\*\*\s*\{\s*ts\s*,\s*tsx\s*\}/g, "**/*.{js,jsx}");
+  content = content.replace(/\*\*\/\*\.\{ts,tsx\}/g, "**/*.{js,jsx}");
+
+  // 3. Удалить tseslint.configs.recommended,
+  content = content.replace(/tseslint\.configs\.recommended,\s*\n?/g, "");
+
+  await fs.writeFile(eslintPath, content, "utf8");
 }
