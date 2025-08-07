@@ -9,8 +9,15 @@ import { CONFIG } from "../../config/config.js";
  * @param {string} appName - New project name.
  * @param {"ts" | "js"} language - Selected project language.
  * @param {boolean} routing - Whether routing is enabled.
+ * @param {string} stateManager - Selected state manager.
  */
-export async function editPackageJson(targetPath, appName, language, routing) {
+export async function editPackageJson(
+  targetPath,
+  appName,
+  language,
+  routing,
+  stateManager
+) {
   try {
     const pkgJsonPath = path.join(targetPath, "package.json");
 
@@ -38,6 +45,16 @@ export async function editPackageJson(targetPath, appName, language, routing) {
     if (pkg.dependencies && routing) {
       pkg.dependencies["react-router-dom"] =
         CONFIG.dependencies["react-router-dom"];
+    }
+
+    if (
+      pkg.dependencies &&
+      stateManager &&
+      stateManager !== "none" &&
+      CONFIG.dependencies[stateManager]
+    ) {
+      const deps = CONFIG.dependencies[stateManager];
+      pkg.dependencies = { ...pkg.dependencies, ...deps };
     }
 
     // Write back

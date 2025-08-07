@@ -5,7 +5,7 @@ import { hideBin } from "yargs/helpers";
 const argv = yargs(hideBin(process.argv))
   .usage("Usage: zgf [options]")
   .example(
-    "zgf --name=my-app --pm=yarn --lang=ts --arch=fsd --routing --private",
+    "zgf --name=my-app --pm=yarn --lang=ts --arch=fsd --routing --private --sm=redux",
     "Generate a frontend project with the given settings"
   )
   .option("name", {
@@ -37,17 +37,24 @@ const argv = yargs(hideBin(process.argv))
     type: "boolean",
     description: "Include private routing",
   })
+  .option("sm", {
+    type: "string",
+    description: "Select state manager",
+    choices: ["redux", "mobx", "none"],
+  })
   .help().argv;
 
 export async function askUser() {
-  const { name, pm, lang, arch, routing, privateRouting } = argv;
+  const { name, pm, lang, arch, routing, privateRouting, stateManager } = argv;
 
   const provided = [name, pm, lang, arch].filter(Boolean).length;
   if (provided > 0 && provided < 4) {
     console.log(
       "\n❗ You have not provided all required CLI parameters.\n" +
         "You must specify at least: --name, --pm, --lang, --arch\n" +
-        "Example: zgf --name=my-app --pm=yarn --lang=ts --arch=fsd\n"
+        "Example: zgf --name=my-app --pm=yarn --lang=ts --arch=fsd\n" +
+        "Or you can provide all parameters interactively using <zgf> without any flags.\n" +
+        "For help use <zgf --help>."
     );
     process.exit(1);
   }
@@ -60,6 +67,7 @@ export async function askUser() {
       architecture: arch,
       routing,
       privateRouting,
+      stateManager: stateManager || "none", // Default to Redux if not specified
     };
   }
 
@@ -110,18 +118,18 @@ export async function askUser() {
       default: true,
       when: (answers) => answers.routing === true,
     },
+    {
+      type: "list",
+      name: "stateManager",
+      message: "Choose state manager:",
+      choices: [
+        { name: "Redux Toolkit", value: "redux" },
+        { name: "MobX", value: "mobx" },
+        { name: "None", value: "none" },
+      ],
+      default: "none",
+    },
     // TODO: Implement these options later
-    // {
-    //   type: "list",
-    //   name: "stateManager",
-    //   message: "Choose state manager:",
-    //   choices: [
-    //     { name: "Redux Toolkit", value: "redux" },
-    //     { name: "MobX", value: "mobx" },
-    //     { name: "None", value: "none" },
-    //   ],
-    //   default: "redux",
-    // },
     // {
     //   type: "confirm",
     //   name: "i18n",

@@ -13,8 +13,10 @@ import { initGit } from "./../../helpers/config/initGit.js";
 import { installDependencies } from "./../../helpers/config/installDependencies.js";
 import { editPackageJson } from "./../../helpers/config/packageJsonEditor.js";
 
-import { convertTsToJsReferences } from "../../helpers/convertTsToJsReferences.js";
-import { fixHtmlEntryPoint } from "../../helpers/fixHtmlEntryPoint.js";
+import { generateStateManagerTemplate } from "./../../helpers/state/generateStateManagerTemplate.js";
+
+import { convertTsToJsReferences } from "./../../helpers/convertTsToJsReferences.js";
+import { fixHtmlEntryPoint } from "./../../helpers/fixHtmlEntryPoint.js";
 import { setupRouting } from "./../../helpers/setupRouting.js";
 import { toggleTypeScriptSupport } from "./../../helpers/toggleTypeScriptSupport.js";
 
@@ -30,6 +32,7 @@ export async function createReactApp() {
       architecture,
       routing,
       privateRouting,
+      stateManager,
     } = await askUser();
 
     const targetPath = path.join(process.cwd(), appName);
@@ -64,7 +67,16 @@ export async function createReactApp() {
       });
     }
 
-    await editPackageJson(targetPath, appName, language, routing); // Edit package.json with new app name and dependencies
+    if (stateManager && stateManager !== "none") {
+      await generateStateManagerTemplate({
+        targetPath,
+        language,
+        architecture,
+        stateManager,
+      });
+    }
+
+    await editPackageJson(targetPath, appName, language, routing, stateManager); // Edit package.json with new app name and dependencies
     await editViteConfig(targetPath, language); // Edit Vite config based on language
 
     if (language === "js") {
@@ -82,6 +94,9 @@ export async function createReactApp() {
       packageManager,
       language,
       architecture,
+      routing,
+      privateRouting,
+      stateManager,
       createdAt: new Date().toISOString(),
     });
 

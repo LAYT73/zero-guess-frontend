@@ -55,6 +55,7 @@ describe("integration test: creating 6 projects", async () => {
         architecture,
         routing: true,
         privateRouting: true,
+        stateManager: "redux",
       });
 
       process.chdir(tempRoot);

@@ -17,9 +17,11 @@
 - **Automatic configuration of package.json, Vite, Git, .gitignore, and other files.**
 - **Supports popular package managers:** npm, yarn, pnpm.
 - **Add Routing templates:** you can add react-router-dom with templates for your init project.
+- **Add State manager with templates:** you also can add RTK/MobX with templates without any other actions.
 - **Extensible templates:** easily add your own templates to the [`templates/`](templates/) folder.
-- **Planned:** state managers, Storybook, tests, UI Kit, linters, and more.
+- **Planned:** Storybook, tests, UI Kit, linters, and more.
 - **Documentation**: [Modern and usefull documentation.](https://layt73.github.io/zero-guess-frontend-docs/)
+
 ---
 
 ## 📦 Installation
@@ -45,11 +47,12 @@ Follow the prompts:
 - Language (TypeScript / JavaScript)
 - Architecture (FSD / Atomic / Empty)
 - Routing (optionally with private route setup)
+- State manager (RTK / Mobx / None)
 
 ### Option 2: CLI options
 
 ```bash
-zgf --name=my-app --pm=yarn --lang=ts --arch=fsd --routing --private
+zgf --name=my-app --pm=yarn --lang=ts --arch=fsd --routing --private --sm=redux
 ```
 
 | Option      | Alias | Type    | Description                             |
@@ -60,6 +63,7 @@ zgf --name=my-app --pm=yarn --lang=ts --arch=fsd --routing --private
 | `--arch`    |       | string  | Architecture (`fsd`, `atomic`, `empty`) |
 | `--routing` |       | boolean | Include `react-router-dom`              |
 | `--private` |       | boolean | Add public/private routing setup        |
+| `--sm       |       | string  | State manager (`redux`, 'mobx', 'none') |
 | `--help`    |       | boolean | Show help                               |
 | `--version` |       | boolean | Show CLI version                        |
 
@@ -85,17 +89,18 @@ Example output:
 Usage: zgf [options]
 
 Options:
-  -n, --name              Project name
+  --name                  Project name
   --pm                    Package manager         [choices: "npm", "yarn", "pnpm"]
   --lang                  Programming language    [choices: "ts", "js"]
   --arch                  Architecture type       [choices: "fsd", "atomic", "empty"]
   --routing               Include react-router-dom
   --private               Add private/public routes
-  -h, --help              Show help
-  -v, --version           Show CLI version
+  --sm                    State manager           [choices: "redux", "mobx", "none"]
+  --help                  Show help
+  --version               Show CLI version
 
 Examples:
-  zgf --name=my-app --pm=yarn --lang=ts --arch=fsd --routing --private
+  zgf --name=my-app --pm=yarn --lang=ts --arch=fsd --routing --private --sm=redux
 ```
 
 ---
@@ -103,12 +108,14 @@ Examples:
 ## 🏗️ Project Structure
 
 ```bash
+├── .github/             # GitHub Action for npm deployment
 ├── bin/                 # CLI entry point
 ├── src/                 # Core CLI logic
 │   └── scaffold/        # Generation modules (React etc.)
 ├── helpers/             # Helper functions
-├── templates/           # Project templates (React/FSD, Atomic, Empty, React-Router-Dom and your custom)
+├── templates/           # Project templates (React/FSD, Atomic, Empty, React-Router-Dom, State managers and your custom)
 ├── utils/               # Utilities
+├── tests/               # Tests
 ├── package.json
 └── README.md
 ```
@@ -139,7 +146,7 @@ Update [`utils/ack.js`](utils/ack.js) to register your new template.
 **Q:** Can I use JavaScript only?
 **A:** Yes, select JS during initialization — all TS files and configs will be removed automatically.
 
-**Q:** How to add routing, tests, Storybook, etc.?
+**Q:** How to add tests, Storybook, etc.?
 **A:** These options will be available in future versions. Stay tuned!
 
 ---
