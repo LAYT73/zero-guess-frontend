@@ -1,6 +1,27 @@
 import inquirer from "inquirer";
 import yargs from "yargs/yargs";
 import { hideBin } from "yargs/helpers";
+import { loadPresetList } from "../helpers/preset/loadPresetList.js";
+import { loadPresetConfig } from "../helpers/preset/loadPresetConfig.js";
+import chalk from "chalk";
+
+const allowedArgs = [
+  "--name",
+  "-n",
+  "--pm",
+  "--packageManager",
+  "--lang",
+  "--language",
+  "--arch",
+  "--architecture",
+  "--routing",
+  "--private",
+  "--privateRouting",
+  "--sm",
+  "--preset",
+  "--preset-list",
+  "--help",
+];
 
 const argv = yargs(hideBin(process.argv))
   .usage("Usage: zgf [options]")
@@ -42,10 +63,64 @@ const argv = yargs(hideBin(process.argv))
     description: "Select state manager",
     choices: ["redux", "mobx", "none"],
   })
+  .option("preset", {
+    type: "string",
+    description: "Use preset by name",
+  })
+  .option("preset-list", {
+    type: "boolean",
+    description: "List available presets",
+  })
   .help().argv;
 
-export async function askUser() {
+export async function askUser(isPreset = false) {
+  const rawArgs = process.argv.slice(2);
+  const isValidArgs = rawArgs.every((arg) => {
+    if (allowedArgs.includes(arg)) return true;
+    if (
+      arg.startsWith("--") &&
+      allowedArgs.some((flag) => flag.startsWith(arg.split("=")[0]))
+    )
+      return true;
+    if (!arg.startsWith("-")) return true; // допустимы значения
+    return false;
+  });
+
+  if (!isValidArgs) {
+    console.log(
+      chalk.red("❌ Unknown command or option detected.\n") +
+        "Use " +
+        chalk.cyan("zgf --help") +
+        " to see available options."
+    );
+    process.exit(1);
+  }
+
   const { name, pm, lang, arch, routing, privateRouting, stateManager } = argv;
+
+  if (argv["preset-list"]) {
+    const list = loadPresetList();
+    if (list.length === 0) {
+      console.log("No presets found.");
+    } else {
+      console.log(chalk.blue("\nAvailable presets:"));
+      list.forEach((p) => console.log(`- ${p}`));
+    }
+    process.exit(0);
+  }
+
+  if (argv.preset) {
+    const config = loadPresetConfig(argv.preset);
+    return {
+      appName: config.appName,
+      packageManager: config.packageManager,
+      language: config.language,
+      architecture: config.architecture,
+      routing: config.routing,
+      privateRouting: config.privateRouting,
+      stateManager: config.stateManager,
+    };
+  }
 
   const provided = [name, pm, lang, arch].filter(Boolean).length;
   if (provided > 0 && provided < 4) {
@@ -74,8 +149,8 @@ export async function askUser() {
   const answers = await inquirer.prompt([
     {
       name: "appName",
-      message: "Enter project name:",
-      default: "frontend-app",
+      message: isPreset ? "Enter preset name:" : "Enter project name:",
+      default: isPreset ? "default-name" : "frontend-app",
     },
     {
       type: "list",

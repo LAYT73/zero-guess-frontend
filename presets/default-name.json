@@ -1,0 +1,10 @@
+{
+  "appName": "default-name",
+  "packageManager": "npm",
+  "language": "ts",
+  "architecture": "fsd",
+  "routing": true,
+  "privateRouting": true,
+  "stateManager": "redux",
+  "createdAt": "2025-08-07T16:30:15.653Z"
+}

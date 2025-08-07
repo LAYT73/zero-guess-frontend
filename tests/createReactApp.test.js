@@ -2,7 +2,7 @@ import { describe, it, vi, expect, beforeAll, afterAll } from "vitest";
 import fs from "fs-extra";
 import path from "path";
 
-import { createReactApp } from "../src/scaffold/react.js";
+import { createReactApp } from "../core/scaffold/react.js";
 
 const tempRoot = path.resolve("temp-test");
 
@@ -16,7 +16,7 @@ const configurations = [
 ];
 
 // Mock askUser for each run
-vi.mock("./../utils/ack", async () => {
+vi.mock("./../utils/requests.js", async () => {
   return {
     askUser: vi.fn((config) =>
       Promise.resolve({
@@ -47,7 +47,7 @@ describe("integration test: creating 6 projects", async () => {
 
     it(`creates project ${appName}`, async () => {
       // Override askUser behavior for each call
-      const askUser = (await import("./../utils/ack.js")).askUser;
+      const askUser = (await import("./../utils/requests.js")).askUser;
       askUser.mockResolvedValueOnce({
         appName,
         packageManager: "yarn",

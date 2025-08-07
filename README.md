@@ -1,10 +1,10 @@
 # zero-guess-frontend
 
-[![npm](https://img.shields.io/npm/v/zero-guess-frontend.svg?style=for-the-badge&logoColor=white)]()
-[![downloads](https://img.shields.io/npm/dm/zero-guess-frontend?style=for-the-badge&logoColor=white)]()
-[![github issues](https://img.shields.io/github/issues/LAYT73/zero-guess-frontend?&style=for-the-badge&color=E0AF68)]()
-[![github last commits](https://img.shields.io/github/last-commit/LAYT73/zero-guess-frontend?style=for-the-badge&color=AD8EE6)]()
-[![license](https://img.shields.io/npm/l/@nestjs/core.svg?style=for-the-badge&logoColor=white)]()
+[![npm](https://img.shields.io/npm/v/zero-guess-frontend.svg?style=for-the-badge&logoColor=white)](https://www.npmjs.com/package/zero-guess-frontend)
+[![downloads](https://img.shields.io/npm/dm/zero-guess-frontend?style=for-the-badge&logoColor=white)](https://www.npmjs.com/package/zero-guess-frontend)
+[![github issues](https://img.shields.io/github/issues/LAYT73/zero-guess-frontend?&style=for-the-badge&color=E0AF68)](https://github.com/LAYT73/zero-guess-frontend/issues)
+[![github last commits](https://img.shields.io/github/last-commit/LAYT73/zero-guess-frontend?style=for-the-badge&color=AD8EE6)](https://www.npmjs.com/package/zero-guess-frontend)
+[![license](https://img.shields.io/npm/l/@nestjs/core.svg?style=for-the-badge&logoColor=white)](https://github.com/LAYT73/zero-guess-frontend?tab=MIT-1-ov-file)
 
 **zero-guess-frontend** is a CLI tool for fast and structured creation of React frontend projects. It minimizes boilerplate, follows best practices, and adapts to your needs.
 
@@ -17,8 +17,9 @@
 - **Automatic configuration of package.json, Vite, Git, .gitignore, and other files.**
 - **Supports popular package managers:** npm, yarn, pnpm.
 - **Add Routing templates:** you can add react-router-dom with templates for your init project.
-- **Add State manager with templates:** you can also add RTK/MobX with templates without any other actions.
+- **Add State manager with templates:** you can also add Redux(Toolkit)/MobX with templates without any other actions.
 - **Extensible templates:** easily add your own templates to the [`templates/`](templates/) folder.
+- **Presets:** create your own custom presets by using `zgf-preset` and then use `zgf --preset=name-of-your-preset`.
 - **Planned:** Storybook, tests, UI Kit, linters, and more.
 - **Documentation**: [Modern and useful documentation.](https://layt73.github.io/zero-guess-frontend-docs/)
 
@@ -55,17 +56,19 @@ Follow the prompts:
 zgf --name=my-app --pm=yarn --lang=ts --arch=fsd --routing --private --sm=redux
 ```
 
-| Option      | Alias | Type    | Description                             |
-| ----------- | ----- | ------- | --------------------------------------- |
-| `--name`    | `-n`  | string  | Project name                            |
-| `--pm`      |       | string  | Package manager (`npm`, `yarn`, `pnpm`) |
-| `--lang`    |       | string  | Language (`ts`, `js`)                   |
-| `--arch`    |       | string  | Architecture (`fsd`, `atomic`, `empty`) |
-| `--routing` |       | boolean | Include `react-router-dom`              |
-| `--private` |       | boolean | Add public/private routing setup        |
-| `--sm`      |       | string  | State manager (`redux`, `mobx`, `none`) |
-| `--help`    |       | boolean | Show help                               |
-| `--version` |       | boolean | Show CLI version                        |
+| Option          | Alias | Type    | Description                             |
+| --------------- | ----- | ------- | --------------------------------------- |
+| `--name`        | `-n`  | string  | Project name                            |
+| `--pm`          |       | string  | Package manager (`npm`, `yarn`, `pnpm`) |
+| `--lang`        |       | string  | Language (`ts`, `js`)                   |
+| `--arch`        |       | string  | Architecture (`fsd`, `atomic`, `empty`) |
+| `--routing`     |       | boolean | Include `react-router-dom`              |
+| `--private`     |       | boolean | Add public/private routing setup        |
+| `--sm`          |       | string  | State manager (`redux`, `mobx`, `none`) |
+| `--help`        |       | boolean | Show help                               |
+| `--version`     |       | boolean | Show CLI version                        |
+| `--preset`      |       | string  | Create project by preset                |
+| `--preset-list` |       | boolean | Print list of presets                   |
 
 ---
 
@@ -98,9 +101,17 @@ Options:
   --sm                    State manager           [choices: "redux", "mobx", "none"]
   --help                  Show help
   --version               Show CLI version
+  --preset                Create project by preset
+  --preset-list           Print list of presets
 
 Examples:
   zgf --name=my-app --pm=yarn --lang=ts --arch=fsd --routing --private --sm=redux
+```
+
+Create your own preset for faster initialization.
+
+```bash
+zgf-preset
 ```
 
 ---
@@ -110,12 +121,14 @@ Examples:
 ```bash
 ├── .github/             # GitHub Action for npm deployment
 ├── bin/                 # CLI entry point
-├── src/                 # Core CLI logic
+├── core/                 # Core CLI logic
+│   ├── setup/           # Core modules
 │   └── scaffold/        # Generation modules (React etc.)
 ├── helpers/             # Helper functions
 ├── templates/           # Project templates (React/FSD, Atomic, Empty, React-Router-Dom, State managers and your custom)
-├── utils/               # Utilities
+├── utils/               # Utilities (fs, user requests)
 ├── tests/               # Tests
+├── presets/            # Presets for project init
 ├── package.json
 ├── README.md
 ├── LICENSE
@@ -130,7 +143,7 @@ Examples:
 
 Add your template to the [`templates/`](templates/) folder to make it available in the CLI.
 
-Update [`utils/ack.js`](utils/ack.js) to register your new template.
+Update [`utils/requests.js`](utils/requests.js) to register your new template.
 
 ---
 
@@ -145,7 +158,7 @@ Update [`utils/ack.js`](utils/ack.js) to register your new template.
 ## ❓ FAQ
 
 **Q:** How to add my own template?
-**A:** Create a new folder in [`templates/`](templates/), add the option in [`utils/ack.js`](utils/ack.js), and define the structure.
+**A:** Create a new folder in [`templates/`](templates/), add the option in [`utils/requests.js`](utils/requests.js), and define the structure.
 
 **Q:** Can I use JavaScript only?
 **A:** Yes, select JS during initialization — all TS files and configs will be removed automatically.
