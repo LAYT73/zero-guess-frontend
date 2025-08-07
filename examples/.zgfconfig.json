@@ -1,0 +1,8 @@
+{
+  "components.zgf": {
+    "path": "./"
+  },
+  "alias": {
+    "@components": "./components/"
+  }
+}

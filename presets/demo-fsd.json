@@ -1,5 +1,5 @@
 {
-  "appName": "default-name",
+  "appName": "demo-fsd",
   "packageManager": "npm",
   "language": "ts",
   "architecture": "fsd",

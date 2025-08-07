@@ -1,0 +1,41 @@
+params:
+  componentName:
+    placeholder: "Input component name"
+    type: string
+    default: "MyComponent"
+    validator: "UpperCamelCase"
+  componentStyleExtension:
+    placeholder: "Input component style extension"
+    type: enum
+    values:
+      - css
+      - scss
+      - module.scss
+      - module.css
+    default: "css"
+  addPublicApi:
+    placeholder: "Add publicApi?"
+    type: boolean
+    default: true
+
+files:
+  - name: "{{=componentName}}.tsx"
+    content: |
+      import "./{{=componentName}}.{{=componentStyleExtension}}";
+      import React from "react";
+
+      interface {{=componentName}}Props {
+        children: React.ReactNode;
+      }
+
+      const {{=componentName}}: React.FC<{{=componentName}}Props> = ({ children }) => {
+        return <div>{children}</div>;
+      };
+
+      export default {{=componentName}};
+  - name: "{{=componentName}}.{{=componentStyleExtension}}"
+    content: ""
+  - name: "index.ts"
+    condition: "{{=addPublicApi}}"
+    content: |
+      export { default as {{=componentName}} } from "./{{=componentName}}";

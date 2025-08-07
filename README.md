@@ -10,6 +10,27 @@
 
 ---
 
+## 📑 Table of Contents
+
+- [🚀 Features](#-features)
+- [📦 Installation](#-installation)
+- [⚡ Quick Start](#-quick-start)
+  - [Interactive Mode](#option-1-interactive-mode)
+  - [CLI Options](#option-2-cli-options)
+- [🆘 CLI Help](#-cli-help)
+- [🛠️ Creating Custom Component Templates](#️-creating-custom-component-templates)
+  - [1. Create config](#1-create-config)
+  - [2. Create template](#2-create-template)
+  - [3. .zgf.yaml structure](#3-zgfyaml-structure)
+  - [4. Generate component](#4-generate-component)
+- [🏗️ Project Structure](#️-project-structure)
+- [❓ FAQ](#-faq)
+- [📚 Docs & Support](#-docs--support)
+- [🧑‍💻 Author](#-author)
+- [💡 Contributing](#-contributing)
+
+---
+
 ## 🚀 Features
 
 - **Initialize a React project** with a choice of architecture: Feature-Sliced Design (FSD), Atomic Design, or Empty.
@@ -19,7 +40,8 @@
 - **Add Routing templates:** you can add react-router-dom with templates for your init project.
 - **Add State manager with templates:** you can also add Redux(Toolkit)/MobX with templates without any other actions.
 - **Extensible templates:** easily add your own templates to the [`templates/`](templates/) folder.
-- **Presets:** create your own custom presets by using `zgf-preset` and then use `zgf --preset=name-of-your-preset`.
+- **Presets:** create your own custom presets using `zgf-preset` and apply them with `zgf --preset=name-of-your-preset`.
+- **Generate custom components:** create a `.zgfconfig.json` file and a `{componentTemplate}.zgf.yaml` template. Then you can generate components into the alias folder using generate command: `zgf g componentTemplate @aliasToYourFolder`.
 - **Planned:** Storybook, tests, UI Kit, linters, and more.
 - **Documentation**: [Modern and useful documentation.](https://layt73.github.io/zero-guess-frontend-docs/)
 
@@ -116,19 +138,136 @@ zgf-preset
 
 ---
 
+## 🛠️ Creating Custom Component Templates
+
+Zero Guess Frontend allows you to generate custom components using `{componentTemplate}.zgf.yaml` templates.
+
+### 1. Create config
+
+Add `.zgfconfig.json` in the project root:
+
+```json
+{
+  "components.zgf": {
+    "path": "./templates/"
+  },
+  "alias": {
+    "@components": "./src/components/"
+  }
+}
+```
+
+- `components.zgf.path` — path to your `.zgf.yaml` templates.
+- `alias` — shortcuts for output folders (multiple aliases allowed).
+
+---
+
+### 2. Create template
+
+In the specified folder (e.g., `./templates/`), create a file:
+
+```bash
+{componentTemplate}.zgf.yaml
+```
+
+Example:
+
+```bash
+ui-component.zgf.yaml
+```
+
+---
+
+### 3. `.zgf.yaml` structure
+
+```yaml
+params:
+  componentName:
+    placeholder: "Input component name"
+    type: string
+    default: "MyComponent"
+    validator: "UpperCamelCase"
+
+  componentStyleExtension:
+    placeholder: "Select style extension"
+    type: enum
+    values:
+      - css
+      - scss
+      - module.scss
+      - module.css
+    default: "css"
+
+  addPublicApi:
+    placeholder: "Add public Api?"
+    type: boolean
+    default: true
+
+files:
+  - name: "{{=componentName}}.tsx"
+    content: |
+      import "./{{=componentName}}.{{=componentStyleExtension}}";
+      import React from "react";
+
+      interface {{=componentName}}Props {
+        children: React.ReactNode;
+      }
+
+      const {{=componentName}}: React.FC<{{=componentName}}Props> = ({ children }) => {
+        return <div>{children}</div>;
+      };
+
+      export default {{=componentName}};
+
+  - name: "{{=componentName}}.{{=componentStyleExtension}}"
+    content: ""
+
+  - name: "index.ts"
+    condition: "{{=addPublicApi}}"
+    content: |
+      export { default as {{=componentName}} } from "./{{=componentName}}";
+```
+
+**Key elements:**
+
+- `params` — parameters prompted from CLI.
+- `files` — files generated using the parameters.
+- `{{=paramName}}` — parameter substitution in file names/content.
+- `condition` — create file only if the expression is true.
+
+---
+
+### 4. Generate component
+
+```bash
+zgf g ui-component @components
+```
+
+- `ui-component` — template name without `.zgf.yaml`
+- `@components` — alias from `.zgfconfig.json`
+
+The command will generate the component in the target folder using your template.
+
+This feature in development! If you have problems you can create [issue](https://github.com/LAYT73/zero-guess-frontend/issues)
+
+---
+
 ## 🏗️ Project Structure
 
 ```bash
 ├── .github/             # GitHub Action for npm deployment
 ├── bin/                 # CLI entry point
-├── core/                 # Core CLI logic
+├── config/              # Cofig for dependencies (react-router-dom, mobx etc.)
+├── core/                # Core CLI logic
 │   ├── setup/           # Core modules
 │   └── scaffold/        # Generation modules (React etc.)
+├── examples/            # Example .zgfconfig.json, demo component.zgf.yaml and /components folder
 ├── helpers/             # Helper functions
-├── templates/           # Project templates (React/FSD, Atomic, Empty, React-Router-Dom, State managers and your custom)
-├── utils/               # Utilities (fs, user requests)
+├── parser/              # Yaml parser for your custom components
+├── presets/             # Presets for project init
+├── templates/           # Project templates (React/FSD, Atomic, Empty, React-Router-Dom, State managers)
 ├── tests/               # Tests
-├── presets/            # Presets for project init
+├── utils/               # Utilities (fs, user requests)
 ├── package.json
 ├── README.md
 ├── LICENSE
@@ -139,32 +278,84 @@ zgf-preset
 
 ---
 
-## 🛠️ Template Extension
-
-Add your template to the [`templates/`](templates/) folder to make it available in the CLI.
-
-Update [`utils/requests.js`](utils/requests.js) to register your new template.
-
----
-
-## 📝 Scripts
-
-- `dev` — development mode
-- `build` — build the project
-- `preview` — preview the built app
-
----
-
 ## ❓ FAQ
 
-**Q:** How to add my own template?
-**A:** Create a new folder in [`templates/`](templates/), add the option in [`utils/requests.js`](utils/requests.js), and define the structure.
+### ❓ What is the difference between FSD and Atomic architecture?
 
-**Q:** Can I use JavaScript only?
-**A:** Yes, select JS during initialization — all TS files and configs will be removed automatically.
+**FSD (Feature-Sliced Design)** focuses on scalability and domain-driven structure. It's ideal for large-scale projects with clear domain boundaries.
+**Atomic Design** is UI-centric, breaking components down into atoms, molecules, organisms, etc., and is better suited for design systems and small-to-medium projects.
 
-**Q:** How to add tests, Storybook, etc.?
-**A:** These options will be available in future versions. Stay tuned!
+---
+
+### ❓ Can I use this tool with an existing React project?
+
+Not directly. `zero-guess-frontend` is optimized for initializing new projects from scratch.
+However, you can extract templates and component generators for use in your existing project if needed.
+
+---
+
+### ❓ How do I add my own component templates?
+
+1. Add a `.zgfconfig.json` in your project root.
+2. Create `{your-template}.zgf.yaml` files in the configured `path`.
+3. Use aliases to specify output folders.
+4. Run:
+
+   ```bash
+   zgf g your-template @yourAlias
+   ```
+
+---
+
+### ❓ What package managers are supported?
+
+- `npm`
+- `yarn`
+- `pnpm`
+
+You can select one interactively or specify it via `--pm` option.
+
+---
+
+### ❓ Can I use JavaScript instead of TypeScript?
+
+Yes. Both `JavaScript` and `TypeScript` are supported. Use the `--lang=js` option when initializing the project.
+
+---
+
+### ❓ What if I don’t want routing or a state manager?
+
+No problem! You can skip both during interactive setup or omit `--routing` and `--sm` flags in CLI.
+
+---
+
+### ❓ How do presets work?
+
+You can save your preferred setup as a **preset**. Create it via:
+
+```bash
+zgf-preset
+```
+
+Then reuse with:
+
+```bash
+zgf --preset=my-preset
+```
+
+Presets save time for repeatable configurations.
+
+---
+
+### ❓ Where can I report bugs or suggest features?
+
+Please open an issue on the [GitHub Issues Page](https://github.com/LAYT73/zero-guess-frontend/issues).
+
+---
+
+### ❓ Is it open source and under what license?
+
+Yes, it's open-source under the [MIT License](https://github.com/LAYT73/zero-guess-frontend/blob/main/LICENSE).
 
 ---
 

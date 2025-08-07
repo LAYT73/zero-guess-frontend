@@ -62,17 +62,17 @@ async function replaceExtensionsRecursive(dir) {
 async function modifyEslintConfigForJS(eslintPath) {
   let content = await fs.readFile(eslintPath, "utf8");
 
-  // 1. Удалить import tseslint
+  // 1. Remove import tseslint
   content = content.replace(
     /import\s+tseslint\s+from\s+['"]typescript-eslint['"]\s*\n?/g,
     ""
   );
 
-  // 2. Заменить '**/*.{ts,tsx}' на '**/*.{js,jsx}'
+  // 2. Replace '**/*.{ts,tsx}' на '**/*.{js,jsx}'
   content = content.replace(/\*\*\s*\{\s*ts\s*,\s*tsx\s*\}/g, "**/*.{js,jsx}");
   content = content.replace(/\*\*\/\*\.\{ts,tsx\}/g, "**/*.{js,jsx}");
 
-  // 3. Удалить tseslint.configs.recommended,
+  // 3. Remove tseslint.configs.recommended,
   content = content.replace(/tseslint\.configs\.recommended,\s*\n?/g, "");
 
   await fs.writeFile(eslintPath, content, "utf8");
