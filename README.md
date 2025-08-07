@@ -63,7 +63,7 @@ zgf --name=my-app --pm=yarn --lang=ts --arch=fsd --routing --private --sm=redux
 | `--arch`    |       | string  | Architecture (`fsd`, `atomic`, `empty`) |
 | `--routing` |       | boolean | Include `react-router-dom`              |
 | `--private` |       | boolean | Add public/private routing setup        |
-| `--sm       |       | string  | State manager (`redux`, 'mobx', 'none') |
+| `--sm`      |       | string  | State manager (`redux`, 'mobx', 'none') |
 | `--help`    |       | boolean | Show help                               |
 | `--version` |       | boolean | Show CLI version                        |
 
@@ -117,7 +117,11 @@ Examples:
 ├── utils/               # Utilities
 ├── tests/               # Tests
 ├── package.json
-└── README.md
+├── README.md
+├── LICENSE
+├── CONTRIBUTING.md
+├── CODE_OF_CONDUCT.md
+└── SECURITY.md
 ```
 
 ---
