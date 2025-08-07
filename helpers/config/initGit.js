@@ -9,6 +9,9 @@ import chalk from "chalk";
 export async function initGit(targetPath) {
   try {
     await execa("git", ["init"], { cwd: targetPath, stdio: "inherit" });
+    console.log(
+      chalk.greenBright("✅ Git repository initialized successfully.")
+    );
   } catch (error) {
     if (
       error.code === "ENOENT" ||

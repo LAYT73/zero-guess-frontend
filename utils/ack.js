@@ -41,6 +41,17 @@ const argv = yargs(hideBin(process.argv))
 
 export async function askUser() {
   const { name, pm, lang, arch, routing, privateRouting } = argv;
+
+  const provided = [name, pm, lang, arch].filter(Boolean).length;
+  if (provided > 0 && provided < 4) {
+    console.log(
+      "\n❗ You have not provided all required CLI parameters.\n" +
+        "You must specify at least: --name, --pm, --lang, --arch\n" +
+        "Example: zgf --name=my-app --pm=yarn --lang=ts --arch=fsd\n"
+    );
+    process.exit(1);
+  }
+
   if (name && pm && lang && arch) {
     return {
       appName: name,

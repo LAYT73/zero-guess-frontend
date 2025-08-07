@@ -1,5 +1,6 @@
 import fs from "fs-extra";
 import path from "path";
+import { CONFIG } from "../../config/config.js";
 
 /**
  * Edits the package.json file to update the project name and dependencies
@@ -35,7 +36,8 @@ export async function editPackageJson(targetPath, appName, language, routing) {
     }
 
     if (pkg.dependencies && routing) {
-      pkg.dependencies["react-router-dom"] = "^7.1.1";
+      pkg.dependencies["react-router-dom"] =
+        CONFIG.dependencies["react-router-dom"];
     }
 
     // Write back
