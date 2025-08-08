@@ -146,6 +146,8 @@ Attention! For presets and other functions to work correctly, you must install C
 
 ## 🛠️ Creating Custom Component Templates
 
+[Example](https://github.com/LAYT73/zero-guess-frontend/tree/main/examples)
+
 Zero Guess Frontend allows you to generate custom components using `{componentTemplate}.zgf.yaml` templates.
 
 ### 1. Create config
