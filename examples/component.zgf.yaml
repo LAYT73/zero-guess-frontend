@@ -39,3 +39,24 @@ files:
     condition: "{{=addPublicApi}}"
     content: |
       export { default as {{=componentName}} } from "./{{=componentName}}";
+
+hooks:
+  preGenerate:
+    - run: "echo Start scaffolding in {{=outputDir}}"
+  afterEach:
+    - run: "echo Created {{=fileName}} at {{=filePath}}"
+    - run: "npx prettier --write {{=filePath}}"
+      when: "{{=addPublicApi}}"
+      timeout: 20000
+      env:
+        COMPONENT: "{{=componentName}}"
+        FILE: "{{=fileName}}"
+  postGenerate:
+    - run: "npx eslint --fix ."
+      cwd: "{{=outputDir}}"
+      timeout: 30000
+      env:
+        GEN_OUT_DIR: "{{=outputDir}}"
+    - run: "node ./scripts/index-files.js --files='{{=createdFiles}}'"
+      cwd: "{{=templateDir}}"
+      continueOnError: true

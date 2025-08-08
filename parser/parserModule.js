@@ -1,46 +1,14 @@
 import fs from "fs-extra";
 import path from "path";
 import yaml from "yaml";
-
-/**
- * Converts {{=param}} syntax to {{ param }} for compatibility with template engine
- */
-function preprocessTemplate(str) {
-  return str.replace(/\{\{=(.+?)\}\}/g, "{{$1}}");
-}
+import { renderTemplate, evaluateCondition } from "../helpers/template.js";
+import { runHooks } from "../helpers/hooks.js";
 
 /**
  * Very basic UpperCamelCase validator
  */
 function isUpperCamelCase(str) {
   return /^[A-Z][a-zA-Z0-9]*$/.test(str);
-}
-
-/**
- * Simple condition evaluator (for booleans only)
- */
-function evaluateCondition(template, context) {
-  const expr = preprocessTemplate(template).replace(
-    /\{\{\s*(\w+)\s*\}\}/g,
-    "$1"
-  );
-
-  const fn = new Function(...Object.keys(context), `return ${expr}`);
-  return fn(...Object.values(context));
-}
-
-/**
- * Simple variable interpolation with strict mode
- * Throws an error if a variable is not found in context
- */
-function renderTemplate(template, context) {
-  const preprocessed = preprocessTemplate(template);
-  return preprocessed.replace(/\{\{\s*(\w+)\s*\}\}/g, (_, key) => {
-    if (!(key in context)) {
-      throw new Error(`Unknown template variable: "${key}"`);
-    }
-    return context[key];
-  });
 }
 
 /**
@@ -51,6 +19,7 @@ export async function generateFromYaml(templatePath, userParams, outputDir) {
   const template = yaml.parse(fileContent);
 
   const context = {};
+  const templateDir = path.dirname(path.resolve(templatePath));
 
   for (const [param, config] of Object.entries(template.params || {})) {
     const value = userParams[param] ?? config.default;
@@ -69,6 +38,17 @@ export async function generateFromYaml(templatePath, userParams, outputDir) {
     context[param] = value;
   }
 
+  // enrich base context with common variables
+  context.outputDir = outputDir;
+  context.templateDir = templateDir;
+
+  if (template.hooks?.preGenerate) {
+    await fs.ensureDir(outputDir);
+    await runHooks(context, outputDir, template.hooks.preGenerate);
+  }
+
+  const createdFiles = [];
+
   for (const file of template.files || []) {
     if (file.condition && !evaluateCondition(file.condition, context)) {
       continue;
@@ -81,5 +61,16 @@ export async function generateFromYaml(templatePath, userParams, outputDir) {
     await fs.ensureDir(path.dirname(fullPath));
     await fs.writeFile(fullPath, content);
     console.log(`✅ Created: ${filename}`);
+
+    createdFiles.push({ filename, fullPath });
+
+    if (template.hooks?.afterEach) {
+      await runHooks(context, outputDir, template.hooks.afterEach, { fileName: filename, filePath: fullPath });
+    }
+  }
+
+  if (template.hooks?.postGenerate) {
+    await runHooks(context, outputDir, template.hooks.postGenerate, { createdFiles: JSON.stringify(createdFiles) });
+    console.log("✅ postGenerate hooks completed");
   }
 }

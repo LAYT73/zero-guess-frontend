@@ -239,6 +239,60 @@ files:
 - `{{=paramName}}` — подстановка параметра в имена файлов/содержимое.
 - `condition` — создавать файл только если выражение истинно.
 
+#### Хуки (опционально)
+
+Можно запускать команды до/после генерации и для каждого созданного файла через секцию `hooks` в `.zgf.yaml`.
+
+Поддерживаемые хуки:
+
+- `preGenerate` — выполняется до создания любых файлов.
+- `afterEach` — выполняется после создания каждого файла. Доп. переменные: `fileName`, `filePath`.
+- `postGenerate` — выполняется после создания всех файлов. Доп. переменная: `createdFiles` (JSON-строка массива объектов `{ filename, fullPath }`).
+
+Форматы шагов:
+
+- Строка — интерпретируется как shell-команда.
+- Объект — `{ run, cwd?, shell?, continueOnError?, when?, timeout?, env? }`
+
+Контекстные переменные в хуках:
+
+- Все ваши `params` (например, `{{=componentName}}`).
+- `outputDir` — конечная папка генерации.
+- `templateDir` — папка, где лежит `.zgf.yaml`.
+
+Пример:
+
+```yaml
+hooks:
+  preGenerate:
+    - run: "echo Start scaffolding in {{=outputDir}}"
+
+  afterEach:
+    - run: "echo Created {{=fileName}} at {{=filePath}}"
+    - run: "npx prettier --write {{=filePath}}"
+      when: "{{=addPublicApi}}"    # условие (опционально)
+      timeout: 20000                # мс (опционально)
+      env:                          # переменные окружения с шаблонами
+        COMPONENT: "{{=componentName}}"
+        FILE: "{{=fileName}}"
+
+  postGenerate:
+    - run: "npx eslint --fix ."
+      cwd: "{{=outputDir}}"        # рабочая директория команды
+      timeout: 30000                # мс (опционально)
+      env:
+        GEN_OUT_DIR: "{{=outputDir}}"
+    - run: "node ./scripts/index-files.js --files='{{=createdFiles}}'"
+      cwd: "{{=templateDir}}"
+      continueOnError: true         # не падать, если шаг завершился с ошибкой
+```
+
+Заметки:
+
+- По умолчанию `cwd` — `{{=outputDir}}`. Генератор гарантирует, что папка существует до запуска `preGenerate`.
+- `shell` по умолчанию `true`, чтобы команды в строковом формате корректно работали кроссплатформенно.
+- Если используете инструменты типа `prettier`/`eslint`, убедитесь, что они доступны в целевом проекте (например, установлены локально, чтобы `npx` их нашёл).
+
 ---
 
 ### 4. Генерация компонента
