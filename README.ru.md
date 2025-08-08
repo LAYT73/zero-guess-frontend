@@ -252,7 +252,7 @@ files:
 Форматы шагов:
 
 - Строка — интерпретируется как shell-команда.
-- Объект — `{ run, cwd?, shell?, continueOnError?, when?, timeout?, env?, onError? }`
+- Объект — `{ run, cwd?, shell?, continueOnError?, condition?, timeout?, env?, onError? }`
 
 Контекстные переменные в хуках:
 
@@ -276,7 +276,7 @@ hooks:
   afterEach:
     - run: "echo Created {{=fileName}} at {{=filePath}}"
     - run: "npx prettier --write {{=filePath}}"
-      when: "{{=addPublicApi}}"    # условие (опционально)
+      condition: "{{=addPublicApi}}"    # условие (опционально)
       timeout: 20000                # мс (опционально)
       env:                          # переменные окружения с шаблонами
         COMPONENT: "{{=componentName}}"
@@ -305,6 +305,7 @@ hooks:
 - `shell` по умолчанию `true`, чтобы команды в строковом формате корректно работали кроссплатформенно.
 - Если используете инструменты типа `prettier`/`eslint`, убедитесь, что они доступны в целевом проекте (например, установлены локально, чтобы `npx` их нашёл).
  - `onError` запускается при падении шага. Если `continueOnError: true`, генерация продолжается после выполнения `onError`; иначе — ошибка пробрасывается после `onError`.
+ - `condition` управляет выполнением шага. Выражение вычисляется относительно контекста хука.
 
 ---
 

@@ -10,7 +10,7 @@ function normalizeHooks(hooksDef) {
 /**
  * Run a list of hook steps with context and options support.
  * Each step can be a string (command) or an object with fields:
- * { run, cwd?, shell?, continueOnError?, when?, timeout?, env? }
+ * { run, cwd?, shell?, continueOnError?, condition?, timeout?, env? }
  */
 export async function runHooks(baseContext, defaultCwd, steps, extraCtx = {}) {
   const list = normalizeHooks(steps);
@@ -21,9 +21,9 @@ export async function runHooks(baseContext, defaultCwd, steps, extraCtx = {}) {
 
     const mergedCtx = { ...baseContext, ...extraCtx };
 
-    if (!isString && step.when) {
-      const shouldRun = evaluateCondition(step.when, mergedCtx);
-      if (!shouldRun) continue;
+    if (!isString && step.condition) {
+      const shouldRunCond = evaluateCondition(step.condition, mergedCtx);
+      if (!shouldRunCond) continue;
     }
 
     const command = renderTemplate(runTmpl, mergedCtx);

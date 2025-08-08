@@ -88,7 +88,7 @@ hooks:
     expect(post[1].cwd).toBe(outDir);
   });
 
-  it("respects when condition and optional timeout", async () => {
+  it("respects condition and optional timeout", async () => {
     const workDir = await tmpDir();
     const outDir = path.join(workDir, "out");
     const templateDir = path.join(workDir, "template");
@@ -114,7 +114,7 @@ hooks:
   afterEach:
     - run: "echo always"
     - run: "echo conditional"
-      when: "{{=add}}"
+      condition: "{{=add}}"
       timeout: 20000
 `;
 
@@ -132,11 +132,10 @@ hooks:
   });
 
   it("runs onError and continues when continueOnError is true", async () => {
-    // Setup execa mock: first command fails, then onError succeeds, then next afterEach succeeds
     execa
       .mockRejectedValueOnce(Object.assign(new Error("boom"), { exitCode: 1, stdout: "", stderr: "err" }))
-      .mockResolvedValueOnce({ exitCode: 0 }) // onError
-      .mockResolvedValueOnce({ exitCode: 0 }); // next normal step
+      .mockResolvedValueOnce({ exitCode: 0 }) 
+      .mockResolvedValueOnce({ exitCode: 0 }); 
 
     const workDir = await tmpDir();
     const outDir = path.join(workDir, "out");
@@ -170,7 +169,6 @@ hooks:
 
     await generateFromYaml(templatePath, { componentName: "X" }, outDir);
 
-    // Calls: fail first, call onError, then second file afterEach
     expect(execa).toHaveBeenCalledTimes(3);
     expect(execa.mock.calls[0][0]).toMatch(/^echo format a.txt/);
     expect(execa.mock.calls[1][0]).toMatch(/failed a.txt: boom/);
@@ -180,7 +178,7 @@ hooks:
   it("runs onError then throws when continueOnError is false", async () => {
     execa
       .mockRejectedValueOnce(Object.assign(new Error("bad"), { exitCode: 2 }))
-      .mockResolvedValueOnce({ exitCode: 0 }); // onError
+      .mockResolvedValueOnce({ exitCode: 0 }); 
 
     const workDir = await tmpDir();
     const outDir = path.join(workDir, "out");
@@ -212,7 +210,6 @@ hooks:
       generateFromYaml(templatePath, { componentName: "Y" }, outDir)
     ).rejects.toThrow(/bad/);
 
-    // Ensure onError executed before throw
     expect(execa).toHaveBeenCalledTimes(2);
     expect(execa.mock.calls[0][0]).toMatch(/^echo do x.txt/);
     expect(execa.mock.calls[1][0]).toMatch(/oops x.txt: bad/);

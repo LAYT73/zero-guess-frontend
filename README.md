@@ -252,7 +252,7 @@ Supported hooks:
 Step formats:
 
 - String — treated as a shell command.
-- Object — `{ run, cwd?, shell?, continueOnError?, when?, timeout?, env?, onError? }`
+- Object — `{ run, cwd?, shell?, continueOnError?, condition?, timeout?, env?, onError? }`
 
 Context variables available in hooks:
 
@@ -276,7 +276,7 @@ hooks:
   afterEach:
     - run: "echo Created {{=fileName}} at {{=filePath}}"
     - run: "npx prettier --write {{=filePath}}"
-      when: "{{=addPublicApi}}"    # optional condition
+      condition: "{{=addPublicApi}}"    # optional condition
       timeout: 20000                # ms
       env:                          # templated env vars
         COMPONENT: "{{=componentName}}"
@@ -305,6 +305,7 @@ Notes:
 - `shell` defaults to `true` for cross-platform execution of string commands.
 - If you use tools like `prettier`/`eslint`, ensure they are available in the target project (e.g., installed locally so `npx` can find them).
  - `onError` runs when a step fails. If `continueOnError: true`, generator continues after `onError`; otherwise it throws after `onError` completes.
+ - `condition` controls whether a step runs. Expression is evaluated against the hook context.
 
 ---
 

@@ -46,7 +46,7 @@ hooks:
   afterEach:
     - run: "echo Created {{=fileName}} at {{=filePath}}"
     - run: "npx prettier --write {{=filePath}}"
-      when: "{{=addPublicApi}}"
+      condition: "{{=addPublicApi}}"
       timeout: 20000
       env:
         COMPONENT: "{{=componentName}}"
