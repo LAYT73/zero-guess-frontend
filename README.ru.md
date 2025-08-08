@@ -65,7 +65,7 @@ npm install -g zero-guess-frontend
 zgf
 ```
 
-[Demo](https://github.com/LAYT73/zero-guess-frontend-docs/blob/main/static/img/setup.gif)
+![Demo](https://github.com/LAYT73/zero-guess-frontend-docs/blob/main/static/img/setup.gif)
 
 Следуйте подсказкам:
 
