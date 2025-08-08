@@ -239,6 +239,74 @@ files:
 - `{{=paramName}}` — parameter substitution in file names/content.
 - `condition` — create file only if the expression is true.
 
+#### Hooks (optional)
+
+You can run commands before/after generation and per created file via `hooks` in your `.zgf.yaml`.
+
+Supported hooks:
+
+- `preGenerate` — runs before any files are created.
+- `afterEach` — runs after each file is created. Extra vars available: `fileName`, `filePath`.
+- `postGenerate` — runs after all files are created. Extra var: `createdFiles` (JSON string array of objects `{ filename, fullPath }`).
+
+Step formats:
+
+- String — treated as a shell command.
+- Object — `{ run, cwd?, shell?, continueOnError?, condition?, timeout?, env?, onError? }`
+
+Context variables available in hooks:
+
+- All your `params` (e.g., `{{=componentName}}`).
+- `outputDir` — resolved generation target directory.
+- `templateDir` — directory of the `.zgf.yaml` template.
+
+Error context (available inside `onError` steps):
+
+- `errorMessage` — stringified error message
+- `exitCode` — process exit code (if any)
+- `stdout` / `stderr` — captured streams when available
+
+Example:
+
+```yaml
+hooks:
+  preGenerate:
+    - run: "echo Start scaffolding in {{=outputDir}}"
+
+  afterEach:
+    - run: "echo Created {{=fileName}} at {{=filePath}}"
+    - run: "npx prettier --write {{=filePath}}"
+      condition: "{{=addPublicApi}}"    # optional condition
+      timeout: 20000                # ms
+      env:                          # templated env vars
+        COMPONENT: "{{=componentName}}"
+        FILE: "{{=fileName}}"
+      onError:
+        - run: "echo 'Prettier failed for {{=fileName}}: {{=errorMessage}}' >&2"
+        - run: "node ./scripts/report-hook-failure.js --file='{{=filePath}}' --code='{{=exitCode}}'"
+          cwd: "{{=templateDir}}"
+      continueOnError: true
+
+  postGenerate:
+    - run: "npx eslint --fix ."
+      cwd: "{{=outputDir}}"        # working directory for the command
+      timeout: 30000
+      env:
+        GEN_OUT_DIR: "{{=outputDir}}"
+      onError: "echo 'ESLint failed with code {{=exitCode}}' >&2"
+    - run: "node ./scripts/index-files.js --files='{{=createdFiles}}'"
+      cwd: "{{=templateDir}}"
+      continueOnError: true         # do not fail generation if this step fails
+```
+
+Notes:
+
+- Default `cwd` is `{{=outputDir}}`. The generator ensures it exists before `preGenerate` runs.
+- `shell` defaults to `true` for cross-platform execution of string commands.
+- If you use tools like `prettier`/`eslint`, ensure they are available in the target project (e.g., installed locally so `npx` can find them).
+ - `onError` runs when a step fails. If `continueOnError: true`, generator continues after `onError`; otherwise it throws after `onError` completes.
+ - `condition` controls whether a step runs. Expression is evaluated against the hook context.
+
 ---
 
 ### 4. Generate component

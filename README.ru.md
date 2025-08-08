@@ -239,6 +239,74 @@ files:
 - `{{=paramName}}` — подстановка параметра в имена файлов/содержимое.
 - `condition` — создавать файл только если выражение истинно.
 
+#### Хуки (опционально)
+
+Можно запускать команды до/после генерации и для каждого созданного файла через секцию `hooks` в `.zgf.yaml`.
+
+Поддерживаемые хуки:
+
+- `preGenerate` — выполняется до создания любых файлов.
+- `afterEach` — выполняется после создания каждого файла. Доп. переменные: `fileName`, `filePath`.
+- `postGenerate` — выполняется после создания всех файлов. Доп. переменная: `createdFiles` (JSON-строка массива объектов `{ filename, fullPath }`).
+
+Форматы шагов:
+
+- Строка — интерпретируется как shell-команда.
+- Объект — `{ run, cwd?, shell?, continueOnError?, condition?, timeout?, env?, onError? }`
+
+Контекстные переменные в хуках:
+
+- Все ваши `params` (например, `{{=componentName}}`).
+- `outputDir` — конечная папка генерации.
+- `templateDir` — папка, где лежит `.zgf.yaml`.
+
+Контекст ошибки (доступен внутри `onError` шагов):
+
+- `errorMessage` — текст ошибки
+- `exitCode` — код выхода процесса (если есть)
+- `stdout` / `stderr` — доступные потоки
+
+Пример:
+
+```yaml
+hooks:
+  preGenerate:
+    - run: "echo Start scaffolding in {{=outputDir}}"
+
+  afterEach:
+    - run: "echo Created {{=fileName}} at {{=filePath}}"
+    - run: "npx prettier --write {{=filePath}}"
+      condition: "{{=addPublicApi}}"    # условие (опционально)
+      timeout: 20000                # мс (опционально)
+      env:                          # переменные окружения с шаблонами
+        COMPONENT: "{{=componentName}}"
+        FILE: "{{=fileName}}"
+      onError:
+        - run: "echo 'Prettier failed for {{=fileName}}: {{=errorMessage}}' >&2"
+        - run: "node ./scripts/report-hook-failure.js --file='{{=filePath}}' --code='{{=exitCode}}'"
+          cwd: "{{=templateDir}}"
+      continueOnError: true
+
+  postGenerate:
+    - run: "npx eslint --fix ."
+      cwd: "{{=outputDir}}"        # рабочая директория команды
+      timeout: 30000                # мс (опционально)
+      env:
+        GEN_OUT_DIR: "{{=outputDir}}"
+      onError: "echo 'ESLint failed with code {{=exitCode}}' >&2"
+    - run: "node ./scripts/index-files.js --files='{{=createdFiles}}'"
+      cwd: "{{=templateDir}}"
+      continueOnError: true         # не падать, если шаг завершился с ошибкой
+```
+
+Заметки:
+
+- По умолчанию `cwd` — `{{=outputDir}}`. Генератор гарантирует, что папка существует до запуска `preGenerate`.
+- `shell` по умолчанию `true`, чтобы команды в строковом формате корректно работали кроссплатформенно.
+- Если используете инструменты типа `prettier`/`eslint`, убедитесь, что они доступны в целевом проекте (например, установлены локально, чтобы `npx` их нашёл).
+ - `onError` запускается при падении шага. Если `continueOnError: true`, генерация продолжается после выполнения `onError`; иначе — ошибка пробрасывается после `onError`.
+ - `condition` управляет выполнением шага. Выражение вычисляется относительно контекста хука.
+
 ---
 
 ### 4. Генерация компонента
