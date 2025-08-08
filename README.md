@@ -446,9 +446,9 @@ Yes, it's open-source under the [MIT License](https://github.com/LAYT73/zero-gue
 
 ## 🧑‍💻 Author
 
-**Nikita Shipilov**
-[GitHub](https://github.com/LAYT73)
-License: ISC
+**Nikita Shipilov** [GitHub](https://github.com/LAYT73)
+
+License: MIT
 
 ---
 
