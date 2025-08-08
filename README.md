@@ -8,6 +8,8 @@
 
 **zero-guess-frontend** is a CLI tool for fast and structured creation of React frontend projects. It minimizes boilerplate, follows best practices, and adapts to your needs.
 
+[Русская версия / Russian version](./README.ru.md)
+
 ---
 
 ## 📑 Table of Contents
@@ -135,6 +137,8 @@ Create your own preset for faster initialization.
 ```bash
 zgf-preset
 ```
+
+Attention! For presets and other functions to work correctly, you must install CLI globally, as described earlier.
 
 ---
 
@@ -371,6 +375,7 @@ Yes, it's open-source under the [MIT License](https://github.com/LAYT73/zero-gue
 ## 🧑‍💻 Author
 
 **Nikita Shipilov**
+[GitHub](https://github.com/LAYT73)
 License: ISC
 
 ---
