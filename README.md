@@ -252,13 +252,19 @@ Supported hooks:
 Step formats:
 
 - String — treated as a shell command.
-- Object — `{ run, cwd?, shell?, continueOnError?, when?, timeout?, env? }`
+- Object — `{ run, cwd?, shell?, continueOnError?, when?, timeout?, env?, onError? }`
 
 Context variables available in hooks:
 
 - All your `params` (e.g., `{{=componentName}}`).
 - `outputDir` — resolved generation target directory.
 - `templateDir` — directory of the `.zgf.yaml` template.
+
+Error context (available inside `onError` steps):
+
+- `errorMessage` — stringified error message
+- `exitCode` — process exit code (if any)
+- `stdout` / `stderr` — captured streams when available
 
 Example:
 
@@ -275,6 +281,11 @@ hooks:
       env:                          # templated env vars
         COMPONENT: "{{=componentName}}"
         FILE: "{{=fileName}}"
+      onError:
+        - run: "echo 'Prettier failed for {{=fileName}}: {{=errorMessage}}' >&2"
+        - run: "node ./scripts/report-hook-failure.js --file='{{=filePath}}' --code='{{=exitCode}}'"
+          cwd: "{{=templateDir}}"
+      continueOnError: true
 
   postGenerate:
     - run: "npx eslint --fix ."
@@ -282,6 +293,7 @@ hooks:
       timeout: 30000
       env:
         GEN_OUT_DIR: "{{=outputDir}}"
+      onError: "echo 'ESLint failed with code {{=exitCode}}' >&2"
     - run: "node ./scripts/index-files.js --files='{{=createdFiles}}'"
       cwd: "{{=templateDir}}"
       continueOnError: true         # do not fail generation if this step fails
@@ -292,6 +304,7 @@ Notes:
 - Default `cwd` is `{{=outputDir}}`. The generator ensures it exists before `preGenerate` runs.
 - `shell` defaults to `true` for cross-platform execution of string commands.
 - If you use tools like `prettier`/`eslint`, ensure they are available in the target project (e.g., installed locally so `npx` can find them).
+ - `onError` runs when a step fails. If `continueOnError: true`, generator continues after `onError`; otherwise it throws after `onError` completes.
 
 ---
 

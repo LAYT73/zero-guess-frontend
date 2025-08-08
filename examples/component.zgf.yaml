@@ -51,12 +51,18 @@ hooks:
       env:
         COMPONENT: "{{=componentName}}"
         FILE: "{{=fileName}}"
+      onError:
+        - run: "echo 'Prettier failed for {{=fileName}}: {{=errorMessage}}' >&2"
+        - run: "node ./scripts/report-hook-failure.js --file='{{=filePath}}' --code='{{=exitCode}}'"
+          cwd: "{{=templateDir}}"
+      continueOnError: true
   postGenerate:
     - run: "npx eslint --fix ."
       cwd: "{{=outputDir}}"
       timeout: 30000
       env:
         GEN_OUT_DIR: "{{=outputDir}}"
+      onError: "echo 'ESLint failed with code {{=exitCode}}' >&2"
     - run: "node ./scripts/index-files.js --files='{{=createdFiles}}'"
       cwd: "{{=templateDir}}"
       continueOnError: true

@@ -130,4 +130,91 @@ hooks:
     expect(Object.prototype.hasOwnProperty.call(opts, "timeout")).toBe(true);
     expect(opts.timeout).toBeUndefined();
   });
+
+  it("runs onError and continues when continueOnError is true", async () => {
+    // Setup execa mock: first command fails, then onError succeeds, then next afterEach succeeds
+    execa
+      .mockRejectedValueOnce(Object.assign(new Error("boom"), { exitCode: 1, stdout: "", stderr: "err" }))
+      .mockResolvedValueOnce({ exitCode: 0 }) // onError
+      .mockResolvedValueOnce({ exitCode: 0 }); // next normal step
+
+    const workDir = await tmpDir();
+    const outDir = path.join(workDir, "out");
+    const templateDir = path.join(workDir, "template");
+    await fs.ensureDir(templateDir);
+
+    const templatePath = path.join(templateDir, "component.zgf.yaml");
+
+    const yaml = `
+params:
+  componentName:
+    placeholder: "Name"
+    type: string
+    default: "X"
+files:
+  - name: "a.txt"
+    content: |
+      a
+  - name: "b.txt"
+    content: |
+      b
+hooks:
+  afterEach:
+    - run: "echo format {{=fileName}}"
+      onError:
+        - run: "echo 'failed {{=fileName}}: {{=errorMessage}}'"
+      continueOnError: true
+`;
+
+    await fs.writeFile(templatePath, yaml, "utf8");
+
+    await generateFromYaml(templatePath, { componentName: "X" }, outDir);
+
+    // Calls: fail first, call onError, then second file afterEach
+    expect(execa).toHaveBeenCalledTimes(3);
+    expect(execa.mock.calls[0][0]).toMatch(/^echo format a.txt/);
+    expect(execa.mock.calls[1][0]).toMatch(/failed a.txt: boom/);
+    expect(execa.mock.calls[2][0]).toMatch(/^echo format b.txt/);
+  });
+
+  it("runs onError then throws when continueOnError is false", async () => {
+    execa
+      .mockRejectedValueOnce(Object.assign(new Error("bad"), { exitCode: 2 }))
+      .mockResolvedValueOnce({ exitCode: 0 }); // onError
+
+    const workDir = await tmpDir();
+    const outDir = path.join(workDir, "out");
+    const templateDir = path.join(workDir, "template");
+    await fs.ensureDir(templateDir);
+
+    const templatePath = path.join(templateDir, "component.zgf.yaml");
+
+    const yaml = `
+params:
+  componentName:
+    placeholder: "Name"
+    type: string
+    default: "Y"
+files:
+  - name: "x.txt"
+    content: |
+      x
+hooks:
+  afterEach:
+    - run: "echo do {{=fileName}}"
+      onError: "echo 'oops {{=fileName}}: {{=errorMessage}}'"
+      continueOnError: false
+`;
+
+    await fs.writeFile(templatePath, yaml, "utf8");
+
+    await expect(
+      generateFromYaml(templatePath, { componentName: "Y" }, outDir)
+    ).rejects.toThrow(/bad/);
+
+    // Ensure onError executed before throw
+    expect(execa).toHaveBeenCalledTimes(2);
+    expect(execa.mock.calls[0][0]).toMatch(/^echo do x.txt/);
+    expect(execa.mock.calls[1][0]).toMatch(/oops x.txt: bad/);
+  });
 });

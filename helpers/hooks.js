@@ -50,7 +50,22 @@ export async function runHooks(baseContext, defaultCwd, steps, extraCtx = {}) {
         env: env ? { ...process.env, ...env } : process.env,
       });
     } catch (err) {
-      console.error("❌ Hook failed:", err?.shortMessage || err?.message || err);
+      const errorMessage = err?.shortMessage || err?.message || String(err);
+      const exitCode = err?.exitCode;
+      const stdout = err?.stdout;
+      const stderr = err?.stderr;
+      console.error("❌ Hook failed:", errorMessage);
+
+      // Run onError steps if provided
+      if (!isString && step.onError) {
+        const errorCtx = { errorMessage, exitCode, stdout, stderr };
+        try {
+          await runHooks(baseContext, cwd, step.onError, { ...extraCtx, ...errorCtx });
+        } catch (onErr) {
+          console.error("⚠️ onError failed:", onErr?.shortMessage || onErr?.message || onErr);
+        }
+      }
+
       if (!continueOnError) throw err;
     }
   }
