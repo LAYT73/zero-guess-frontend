@@ -61,6 +61,30 @@ export async function generateComponents() {
         if (config.validator === "UpperCamelCase") {
           q.validate = (val) =>
             /^[A-Z][a-zA-Z0-9]*$/.test(val) || "Must be UpperCamelCase";
+        } else if (config.validator === "camelCase") {
+          q.validate = (val) =>
+            /^[a-z][a-zA-Z0-9]*$/.test(val) || "Must be camelCase";
+        } else if (config.validator === "snake_case") {
+          q.validate = (val) =>
+            /^[a-z][a-z0-9_]*$/.test(val) || "Must be snake_case";
+        } else if (config.validator === "kebab-case") {
+          q.validate = (val) =>
+            /^[a-z][a-z0-9\-]*$/.test(val) || "Must be kebab-case";
+        } else if (config.validator === "Pascal_Snake_Case") {
+          q.validate = (val) =>
+            /^([A-Z][a-z0-9]+_)*[A-Z][a-z0-9]+$/.test(val) ||
+            "Must be Pascal_Snake_Case";
+        } else if (config.validator === "nonEmpty") {
+          q.validate = (val) =>
+            val.trim().length > 0 || "Value must not be empty";
+        } else if (config.validator === "noSpaces") {
+          q.validate = (val) =>
+            !/\s/.test(val) || "Value must not contain spaces";
+        } else if (config.validator === "numeric") {
+          q.validate = (val) => /^[0-9]+$/.test(val) || "Must be numeric";
+        } else if (config.validator === "alpha") {
+          q.validate = (val) =>
+            /^[A-Za-z]+$/.test(val) || "Must contain only letters";
         }
       }
 

@@ -55,6 +55,7 @@ export async function generateFromYaml(templatePath, userParams, outputDir) {
   for (const [param, config] of Object.entries(template.params || {})) {
     const value = userParams[param] ?? config.default;
 
+    // TODO: Implement additional validation logic
     if (config.validator === "UpperCamelCase" && !isUpperCamelCase(value)) {
       throw new Error(`Parameter "${param}" must be in UpperCamelCase`);
     }
