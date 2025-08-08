@@ -65,6 +65,8 @@ npm install -g zero-guess-frontend
 zgf
 ```
 
+[Demo](https://github.com/LAYT73/zero-guess-frontend-docs/blob/main/static/img/setup.gif)
+
 Follow the prompts:
 
 - Project name
@@ -276,9 +278,9 @@ hooks:
   afterEach:
     - run: "echo Created {{=fileName}} at {{=filePath}}"
     - run: "npx prettier --write {{=filePath}}"
-      condition: "{{=addPublicApi}}"    # optional condition
-      timeout: 20000                # ms
-      env:                          # templated env vars
+      condition: "{{=addPublicApi}}" # optional condition
+      timeout: 20000 # ms
+      env: # templated env vars
         COMPONENT: "{{=componentName}}"
         FILE: "{{=fileName}}"
       onError:
@@ -289,14 +291,14 @@ hooks:
 
   postGenerate:
     - run: "npx eslint --fix ."
-      cwd: "{{=outputDir}}"        # working directory for the command
+      cwd: "{{=outputDir}}" # working directory for the command
       timeout: 30000
       env:
         GEN_OUT_DIR: "{{=outputDir}}"
       onError: "echo 'ESLint failed with code {{=exitCode}}' >&2"
     - run: "node ./scripts/index-files.js --files='{{=createdFiles}}'"
       cwd: "{{=templateDir}}"
-      continueOnError: true         # do not fail generation if this step fails
+      continueOnError: true # do not fail generation if this step fails
 ```
 
 Notes:
@@ -304,8 +306,8 @@ Notes:
 - Default `cwd` is `{{=outputDir}}`. The generator ensures it exists before `preGenerate` runs.
 - `shell` defaults to `true` for cross-platform execution of string commands.
 - If you use tools like `prettier`/`eslint`, ensure they are available in the target project (e.g., installed locally so `npx` can find them).
- - `onError` runs when a step fails. If `continueOnError: true`, generator continues after `onError`; otherwise it throws after `onError` completes.
- - `condition` controls whether a step runs. Expression is evaluated against the hook context.
+- `onError` runs when a step fails. If `continueOnError: true`, generator continues after `onError`; otherwise it throws after `onError` completes.
+- `condition` controls whether a step runs. Expression is evaluated against the hook context.
 
 ---
 

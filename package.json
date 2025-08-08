@@ -45,6 +45,7 @@
     "execa": "^9.6.0",
     "fs-extra": "^11.3.0",
     "inquirer": "^12.9.0",
+    "update-notifier": "^7.3.1",
     "yaml": "^2.8.1",
     "yargs": "^18.0.0"
   },

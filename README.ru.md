@@ -65,6 +65,8 @@ npm install -g zero-guess-frontend
 zgf
 ```
 
+[Demo](https://github.com/LAYT73/zero-guess-frontend-docs/blob/main/static/img/setup.gif)
+
 Следуйте подсказкам:
 
 - Название проекта
@@ -276,9 +278,9 @@ hooks:
   afterEach:
     - run: "echo Created {{=fileName}} at {{=filePath}}"
     - run: "npx prettier --write {{=filePath}}"
-      condition: "{{=addPublicApi}}"    # условие (опционально)
-      timeout: 20000                # мс (опционально)
-      env:                          # переменные окружения с шаблонами
+      condition: "{{=addPublicApi}}" # условие (опционально)
+      timeout: 20000 # мс (опционально)
+      env: # переменные окружения с шаблонами
         COMPONENT: "{{=componentName}}"
         FILE: "{{=fileName}}"
       onError:
@@ -289,14 +291,14 @@ hooks:
 
   postGenerate:
     - run: "npx eslint --fix ."
-      cwd: "{{=outputDir}}"        # рабочая директория команды
-      timeout: 30000                # мс (опционально)
+      cwd: "{{=outputDir}}" # рабочая директория команды
+      timeout: 30000 # мс (опционально)
       env:
         GEN_OUT_DIR: "{{=outputDir}}"
       onError: "echo 'ESLint failed with code {{=exitCode}}' >&2"
     - run: "node ./scripts/index-files.js --files='{{=createdFiles}}'"
       cwd: "{{=templateDir}}"
-      continueOnError: true         # не падать, если шаг завершился с ошибкой
+      continueOnError: true # не падать, если шаг завершился с ошибкой
 ```
 
 Заметки:
@@ -304,8 +306,8 @@ hooks:
 - По умолчанию `cwd` — `{{=outputDir}}`. Генератор гарантирует, что папка существует до запуска `preGenerate`.
 - `shell` по умолчанию `true`, чтобы команды в строковом формате корректно работали кроссплатформенно.
 - Если используете инструменты типа `prettier`/`eslint`, убедитесь, что они доступны в целевом проекте (например, установлены локально, чтобы `npx` их нашёл).
- - `onError` запускается при падении шага. Если `continueOnError: true`, генерация продолжается после выполнения `onError`; иначе — ошибка пробрасывается после `onError`.
- - `condition` управляет выполнением шага. Выражение вычисляется относительно контекста хука.
+- `onError` запускается при падении шага. Если `continueOnError: true`, генерация продолжается после выполнения `onError`; иначе — ошибка пробрасывается после `onError`.
+- `condition` управляет выполнением шага. Выражение вычисляется относительно контекста хука.
 
 ---
 
