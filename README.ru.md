@@ -231,7 +231,7 @@ files:
     content: ""
 
   - name: "index.ts"
-    when: "{{=addPublicApi}}"
+    condition: "{{=addPublicApi}}"
     content: |
     export { default as {{=componentName}} } from "./{{=componentName}}";
 ```
