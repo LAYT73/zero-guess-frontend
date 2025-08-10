@@ -1,6 +1,6 @@
 {
   "name": "zero-guess-frontend",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Zero-config CLI tool for engineering-grade frontend project initialization. Opinionated, scalable, and structured — so you can focus on engineering, not boilerplate.",
   "bin": {
     "zgf": "./bin/index.js",

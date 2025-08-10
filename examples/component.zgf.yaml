@@ -47,7 +47,7 @@ hooks:
     - run: "echo Created {{=fileName}} at {{=filePath}}"
     - run: "npx prettier --write {{=filePath}}"
       condition: "{{=addPublicApi}}"
-      timeout: 20000
+      timeout: 1000
       env:
         COMPONENT: "{{=componentName}}"
         FILE: "{{=fileName}}"
@@ -59,7 +59,7 @@ hooks:
   postGenerate:
     - run: "npx eslint --fix ."
       cwd: "{{=outputDir}}"
-      timeout: 30000
+      timeout: 1000
       env:
         GEN_OUT_DIR: "{{=outputDir}}"
       onError: "echo 'ESLint failed with code {{=exitCode}}' >&2"

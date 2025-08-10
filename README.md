@@ -1,5 +1,7 @@
 # zero-guess-frontend
 
+![ZGF](https://github.com/LAYT73/zero-guess-frontend-docs/blob/main/static/img/zgf.gif)
+
 [![npm](https://img.shields.io/npm/v/zero-guess-frontend.svg?style=for-the-badge&logoColor=white)](https://www.npmjs.com/package/zero-guess-frontend)
 [![downloads](https://img.shields.io/npm/dm/zero-guess-frontend?style=for-the-badge&logoColor=white)](https://www.npmjs.com/package/zero-guess-frontend)
 [![github issues](https://img.shields.io/github/issues/LAYT73/zero-guess-frontend?&style=for-the-badge&color=E0AF68)](https://github.com/LAYT73/zero-guess-frontend/issues)
